@@ -18,5 +18,5 @@ export class Ingredient extends BaseEntity {
 
 	@ManyToMany(() => Product)
 	@JoinTable()
-	products: Product[]
+	has: Product[]
 }

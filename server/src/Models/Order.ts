@@ -8,19 +8,25 @@ export class Order extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
-	@Column({ type: "datetime" })
+	@Column({ type: "datetime", default: new Date() })
 	createdAt: Date
 
 	@Column({ type: "int" })
 	totalAmount: number
 
-	@ManyToOne(() => User, (user) => user.orders)
+	@ManyToOne(() => User, (user) => user.orders, {
+		nullable: true
+	})
 	user: User
 
-	@ManyToOne(() => Terminal, (terminal) => terminal.orders)
+	@ManyToOne(() => Terminal, (terminal) => terminal.orders, {
+		nullable: false
+	})
 	terminal: Terminal
 
-	@OneToOne(() => State)
+	@OneToOne(() => State, {
+		nullable: false
+	})
 	@JoinColumn()
 	state: State
 }

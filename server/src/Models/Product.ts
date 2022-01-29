@@ -28,5 +28,5 @@ export class Product extends BaseEntity {
 
 	@ManyToMany(() => Order)
 	@JoinTable()
-	orders: Order[]
+	has: Order[]
 }
