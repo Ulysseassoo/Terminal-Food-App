@@ -7,6 +7,7 @@ import { createConnection } from "typeorm"
 import UserRoute from "./Routes/user"
 import TerminalRoute from "./Routes/terminal"
 import CategoryRoute from "./Routes/category"
+import OrderRoute from "./Routes/order"
 
 // In order to use our Private keys we set up config.env file
 dotenv.config({
@@ -30,6 +31,7 @@ createConnection()
 app.use("/api/", UserRoute)
 app.use("/api/", TerminalRoute)
 app.use("/api/", CategoryRoute)
+app.use("/api/", OrderRoute)
 
 app.listen(port, () => {
 	return console.log(`Express is listening at http://localhost:${port}`)

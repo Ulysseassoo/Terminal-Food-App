@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Order } from "./Order"
 
 @Entity()
 export class State extends BaseEntity {
@@ -7,4 +8,7 @@ export class State extends BaseEntity {
 
 	@Column()
 	name: string
+
+	@OneToMany(() => Order, (order) => order.state)
+	orders: Order[]
 }

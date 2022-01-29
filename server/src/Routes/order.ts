@@ -3,13 +3,24 @@ import { Order } from "../Models/Order"
 import { validationResult } from "express-validator"
 import { orderValidator } from "../Validator/orderValidator"
 import { State } from "../Models/State"
+import { Terminal } from "../Models/Terminal"
+import { User } from "../Models/User"
+import { Product } from "../Models/Product"
+
+type createOrder = {
+	totalAmount: number
+	terminal_unique_id: string
+	user_id: number
+	products: Product[]
+	state_id?: number
+}
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/orders", async (req: express.Request, res: express.Response) => {
-	const orders = await Order.find({ relations: ["has"] })
+	const orders = await Order.find({ relations: ["products", "products.ingredients"] })
 	res.json({ status: 200, data: orders })
 	return
 })
@@ -25,18 +36,48 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		return
 	}
 
-	const { totalAmount } = req.body
+	const { totalAmount, terminal_unique_id, user_id, products }: createOrder = req.body
 
 	try {
 		const order = new Order()
-		order.totalAmount = totalAmount
+
 		const orderState = await State.findOne({
 			where: {
-				id: 0
+				id: 1
 			}
 		})
+
+		const terminal = await Terminal.findOne({
+			where: {
+				unique_id: terminal_unique_id
+			}
+		})
+
+		const user = await User.findOne({
+			where: {
+				id: user_id
+			}
+		})
+
+		order.totalAmount = totalAmount
 		order.state = orderState
-		const result = await Category.save(category)
+		order.terminal = terminal
+		if (user) {
+			order.user = user
+		}
+		for (let i = 0; i < products.length; i++) {
+			const product = products[i]
+			if (product.custom) {
+				product.id = null
+			}
+			product.ingredients &&
+				product.ingredients.forEach((ingredient) => {
+					ingredient.quantity -= 1
+				})
+			product.has = [order]
+			await Product.save(product)
+		}
+		const result = await Order.save(order)
 		res.json({ status: 200, result: result })
 		return
 	} catch (error) {
@@ -45,25 +86,25 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 	}
 })
 
-router.get("/categories/:id", async (req: express.Request, res: express.Response) => {
+router.get("/orders/:id", async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
-		const category = await Category.findOne({
+		const order = await Order.findOne({
 			where: {
 				id: id
 			},
-			relations: ["products"]
+			relations: ["has", "has.ingredients"]
 		})
-		if (!category) throw Error
-		res.json({ status: 200, result: category })
+		if (!order) throw Error
+		res.json({ status: 200, result: order })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, result: "The category doesn't exist" })
+		res.status(400).send({ status: 400, result: "The Order doesn't exist" })
 		return
 	}
 })
 
-router.put("/categories/:id", categoryValidator, async (req: express.Request, res: express.Response) => {
+router.put("/orders/:id", orderValidator, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const errors = validationResult(req)
@@ -75,35 +116,55 @@ router.put("/categories/:id", categoryValidator, async (req: express.Request, re
 		})
 		return
 	}
-	const { name } = req.body
-	try {
-		const category = await Category.findOne({
-			where: {
-				id: id
-			},
-			relations: ["products"]
-		})
-		if (!category) throw Error
-		category.name = name
-		const result = await Category.save(category)
-		res.json({ status: 200, result: result })
-		return
-	} catch (error) {
-		res.status(400).send({ status: 400, result: "The category doesn't exist" })
-		return
-	}
-})
+	const { totalAmount, terminal_unique_id, user_id, state_id }: createOrder = req.body
+	const terminal = await Terminal.findOne({
+		where: {
+			unique_id: terminal_unique_id
+		}
+	})
 
-router.delete("/categories/:id", async (req: express.Request, res: express.Response) => {
-	const { id } = req.params
+	const user = await User.findOne({
+		where: {
+			id: user_id
+		}
+	})
+
+	const state = await State.findOne({
+		where: {
+			id: state_id
+		}
+	})
+
 	try {
-		const category = await Category.findOne({
+		const order = await Order.findOne({
 			where: {
 				id: id
 			}
 		})
-		if (!category) throw Error
-		res.json({ status: 200, result: "Category has been deleted" })
+		if (!order) throw Error
+		order.totalAmount = totalAmount
+		order.terminal = terminal
+		order.user = user
+		order.state = state
+		const result = await Order.save(order)
+		res.json({ status: 200, result: result })
+		return
+	} catch (error) {
+		res.status(400).send({ status: 400, result: "The order doesn't exist" })
+		return
+	}
+})
+
+router.delete("/orders/:id", async (req: express.Request, res: express.Response) => {
+	const { id } = req.params
+	try {
+		const order = await Order.findOne({
+			where: {
+				id: id
+			}
+		})
+		if (!order) throw Error
+		res.json({ status: 200, result: "Order has been deleted" })
 		return
 	} catch (error) {
 		res.status(400).send({ status: 400, result: "The category doesn't exist" })

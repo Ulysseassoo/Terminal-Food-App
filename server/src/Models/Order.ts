@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Product } from "./Product"
 import { State } from "./State"
 import { Terminal } from "./Terminal"
 import { User } from "./User"
@@ -8,7 +9,7 @@ export class Order extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
-	@Column({ type: "datetime", default: new Date() })
+	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
 	createdAt: Date
 
 	@Column({ type: "int" })
@@ -24,9 +25,9 @@ export class Order extends BaseEntity {
 	})
 	terminal: Terminal
 
-	@OneToOne(() => State, {
-		nullable: false
-	})
-	@JoinColumn()
+	@ManyToOne(() => State, (state) => state.orders)
 	state: State
+
+	@ManyToMany(() => Product, (product) => product.has)
+	products: Product[]
 }

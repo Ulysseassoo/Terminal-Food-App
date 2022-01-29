@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Category } from "./Category"
+import { Ingredient } from "./Ingredient"
 import { Order } from "./Order"
 import { User } from "./User"
 
@@ -26,7 +27,14 @@ export class Product extends BaseEntity {
 	@ManyToOne(() => Category, (category) => category.products)
 	category: Category
 
-	@ManyToMany(() => Order)
+	@ManyToMany(() => Order, (order) => order.products, {
+		cascade: true
+	})
 	@JoinTable()
 	has: Order[]
+
+	@ManyToMany(() => Ingredient, (ingredient) => ingredient.has, {
+		cascade: true
+	})
+	ingredients: Ingredient[]
 }
