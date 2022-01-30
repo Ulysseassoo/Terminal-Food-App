@@ -78,10 +78,10 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			await Product.save(product)
 		}
 		const result = await Order.save(order)
-		res.json({ status: 200, result: result })
+		res.json({ status: 200, data: result })
 		return
 	} catch (error) {
-		res.json({ status: 400, result: error })
+		res.json({ status: 400, data: error })
 		return
 	}
 })
@@ -96,10 +96,10 @@ router.get("/orders/:id", async (req: express.Request, res: express.Response) =>
 			relations: ["has", "has.ingredients"]
 		})
 		if (!order) throw Error
-		res.json({ status: 200, result: order })
+		res.json({ status: 200, data: order })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, result: "The Order doesn't exist" })
+		res.status(400).send({ status: 400, data: "The Order doesn't exist" })
 		return
 	}
 })
@@ -147,10 +147,10 @@ router.put("/orders/:id", orderValidator, async (req: express.Request, res: expr
 		order.user = user
 		order.state = state
 		const result = await Order.save(order)
-		res.json({ status: 200, result: result })
+		res.json({ status: 200, data: result })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, result: "The order doesn't exist" })
+		res.status(400).send({ status: 400, data: "The order doesn't exist" })
 		return
 	}
 })
@@ -164,10 +164,10 @@ router.delete("/orders/:id", async (req: express.Request, res: express.Response)
 			}
 		})
 		if (!order) throw Error
-		res.json({ status: 200, result: "Order has been deleted" })
+		res.json({ status: 200, data: "Order has been deleted" })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, result: "The category doesn't exist" })
+		res.status(400).send({ status: 400, data: "The category doesn't exist" })
 		return
 	}
 })
