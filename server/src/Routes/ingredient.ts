@@ -5,12 +5,6 @@ import { Ingredient } from "../Models/Ingredient"
 
 const router = express.Router()
 
-type ingredientInterface = {
-	name: string
-	quantity: number
-	important: boolean
-}
-
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/ingredients", async (req: express.Request, res: express.Response) => {
@@ -30,7 +24,7 @@ router.post("/ingredients", ingredientValidator, async (req: express.Request, re
 		return
 	}
 
-	const { quantity, name, important }: ingredientInterface = req.body
+	const { quantity, name, important }: Ingredient = req.body
 
 	try {
 		const ingredient = new Ingredient()
@@ -76,7 +70,7 @@ router.put("/ingredients/:id", ingredientValidator, async (req: express.Request,
 		})
 		return
 	}
-	const { quantity, name, important }: ingredientInterface = req.body
+	const { quantity, name, important }: Ingredient = req.body
 
 	try {
 		const ingredient = await Ingredient.findOne({

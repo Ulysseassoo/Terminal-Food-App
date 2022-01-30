@@ -8,16 +8,6 @@ import { Category } from "../Models/Category"
 
 const router = express.Router()
 
-type productInterface = {
-	price: number
-	name: string
-	description: string
-	custom: boolean
-	calories: string
-	category_id: number
-	ingredients: Ingredient[]
-}
-
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/products", async (req: express.Request, res: express.Response) => {
@@ -37,21 +27,21 @@ router.post("/products", productValidator, async (req: express.Request, res: exp
 		return
 	}
 
-	const { price, name, description, custom, calories, category_id, ingredients }: productInterface = req.body
+	const { price, name, description, custom, calories, category, ingredients }: Product = req.body
 
 	try {
 		const product = new Product()
 
-		const category = await Category.findOne({
+		const productCategory = await Category.findOne({
 			where: {
-				id: category_id
+				id: category
 			}
 		})
 
 		product.price = price
 		product.name = name
 		product.description = description
-		product.category = category
+		product.category = productCategory
 		product.custom = custom
 		product.calories = calories
 		product.ingredients = [...ingredients]
@@ -94,7 +84,7 @@ router.put("/orders/:id", productValidator, async (req: express.Request, res: ex
 		})
 		return
 	}
-	const { price, name, description, custom, calories, category_id, ingredients }: productInterface = req.body
+	const { price, name, description, custom, calories, category, ingredients }: Product = req.body
 
 	try {
 		const product = await Product.findOne({
@@ -105,16 +95,16 @@ router.put("/orders/:id", productValidator, async (req: express.Request, res: ex
 
 		if (!product) throw Error("Product was not found")
 
-		const category = await Category.findOne({
+		const productCategory = await Category.findOne({
 			where: {
-				id: category_id
+				id: category
 			}
 		})
 
 		product.price = price
 		product.name = name
 		product.description = description
-		product.category = category
+		product.category = productCategory
 		product.custom = custom
 		product.calories = calories
 		product.ingredients = [...ingredients]

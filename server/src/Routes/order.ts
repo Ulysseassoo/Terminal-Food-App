@@ -7,20 +7,12 @@ import { Terminal } from "../Models/Terminal"
 import { User } from "../Models/User"
 import { Product } from "../Models/Product"
 
-type createOrder = {
-	totalAmount: number
-	terminal_unique_id: string
-	user_id: number
-	products: Product[]
-	state_id?: number
-}
-
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/orders", async (req: express.Request, res: express.Response) => {
-	const orders = await Order.find({ relations: ["products", "products.ingredients"] })
+	const orders = await Order.find({ relations: ["products", "products.ingredients"], order: { id: "DESC" } })
 	res.json({ status: 200, data: orders })
 	return
 })
@@ -36,7 +28,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		return
 	}
 
-	const { totalAmount, terminal_unique_id, user_id, products }: createOrder = req.body
+	const { totalAmount, terminal, user, products }: Order = req.body
 
 	try {
 		const order = new Order()
@@ -47,23 +39,23 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			}
 		})
 
-		const terminal = await Terminal.findOne({
+		const orderTerminal = await Terminal.findOne({
 			where: {
-				unique_id: terminal_unique_id
+				unique_id: terminal
 			}
 		})
 
-		const user = await User.findOne({
+		const orderUser = await User.findOne({
 			where: {
-				id: user_id
+				id: user
 			}
 		})
 
 		order.totalAmount = totalAmount
 		order.state = orderState
-		order.terminal = terminal
+		order.terminal = orderTerminal
 		if (user) {
-			order.user = user
+			order.user = orderUser
 		}
 		for (let i = 0; i < products.length; i++) {
 			const product = products[i]
@@ -116,22 +108,23 @@ router.put("/orders/:id", orderValidator, async (req: express.Request, res: expr
 		})
 		return
 	}
-	const { totalAmount, terminal_unique_id, user_id, state_id }: createOrder = req.body
-	const terminal = await Terminal.findOne({
+	const { totalAmount, terminal, user, state }: Order = req.body
+
+	const orderTerminal = await Terminal.findOne({
 		where: {
-			unique_id: terminal_unique_id
+			unique_id: terminal
 		}
 	})
 
-	const user = await User.findOne({
+	const orderUser = await User.findOne({
 		where: {
-			id: user_id
+			id: user
 		}
 	})
 
-	const state = await State.findOne({
+	const orderState = await State.findOne({
 		where: {
-			id: state_id
+			id: state
 		}
 	})
 
@@ -143,9 +136,9 @@ router.put("/orders/:id", orderValidator, async (req: express.Request, res: expr
 		})
 		if (!order) throw Error
 		order.totalAmount = totalAmount
-		order.terminal = terminal
-		order.user = user
-		order.state = state
+		order.terminal = orderTerminal
+		order.user = orderUser
+		order.state = orderState
 		const result = await Order.save(order)
 		res.json({ status: 200, data: result })
 		return
