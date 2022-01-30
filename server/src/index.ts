@@ -4,12 +4,26 @@ import dotenv from "dotenv"
 import path from "path"
 import cors from "cors"
 import { createConnection } from "typeorm"
+import jwtExpress from "express-jwt"
 import UserRoute from "./Routes/user"
 import TerminalRoute from "./Routes/terminal"
 import CategoryRoute from "./Routes/category"
 import OrderRoute from "./Routes/order"
 import ProductRoute from "./Routes/product"
 import IngredientRoute from "./Routes/ingredient"
+import process from "process"
+
+// Declaire Global User Variable
+declare global {
+	namespace Express {
+		interface User {
+			id: number
+			email: string
+			password: string
+			role: string
+		}
+	}
+}
 
 // In order to use our Private keys we set up config.env file
 dotenv.config({
@@ -18,10 +32,18 @@ dotenv.config({
 
 const app = express()
 const port = 3500
+const secret = process.env.JWT_SECRET
 
 app.use(express.json())
 // Use Cors
 app.use(cors())
+
+// Secure each route with a token
+app.use(
+	jwtExpress({ secret: secret, algorithms: ["HS256"] }).unless({
+		path: ["/api/auth", "/api/kitchen", "/api/admin", "/api/orders"]
+	})
+)
 
 createConnection()
 	.then((connection) => {

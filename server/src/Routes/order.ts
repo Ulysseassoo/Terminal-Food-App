@@ -6,6 +6,7 @@ import { State } from "../Models/State"
 import { Terminal } from "../Models/Terminal"
 import { User } from "../Models/User"
 import { Product } from "../Models/Product"
+import { isAdmin, isKitchen } from "../Helpers/verify"
 
 const router = express.Router()
 
@@ -87,16 +88,16 @@ router.get("/orders/:id", async (req: express.Request, res: express.Response) =>
 			},
 			relations: ["has", "has.ingredients"]
 		})
-		if (!order) throw Error
+		if (!order) throw Error("The Order doesn't exist")
 		res.json({ status: 200, data: order })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, data: "The Order doesn't exist" })
+		res.status(400).send({ status: 400, data: error })
 		return
 	}
 })
 
-router.put("/orders/:id", orderValidator, async (req: express.Request, res: express.Response) => {
+router.put("/orders/:id", orderValidator, isKitchen, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const errors = validationResult(req)
@@ -134,7 +135,7 @@ router.put("/orders/:id", orderValidator, async (req: express.Request, res: expr
 				id: id
 			}
 		})
-		if (!order) throw Error
+		if (!order) throw Error("The order doesn't exist")
 		order.totalAmount = totalAmount
 		order.terminal = orderTerminal
 		order.user = orderUser
@@ -143,12 +144,12 @@ router.put("/orders/:id", orderValidator, async (req: express.Request, res: expr
 		res.json({ status: 200, data: result })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, data: "The order doesn't exist" })
+		res.status(400).send({ status: 400, data: error })
 		return
 	}
 })
 
-router.delete("/orders/:id", async (req: express.Request, res: express.Response) => {
+router.delete("/orders/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const order = await Order.findOne({
@@ -156,11 +157,11 @@ router.delete("/orders/:id", async (req: express.Request, res: express.Response)
 				id: id
 			}
 		})
-		if (!order) throw Error
+		if (!order) throw Error("The order doesn't exist")
 		res.json({ status: 200, data: "Order has been deleted" })
 		return
 	} catch (error) {
-		res.status(400).send({ status: 400, data: "The category doesn't exist" })
+		res.status(400).send({ status: 400, data: error })
 		return
 	}
 })

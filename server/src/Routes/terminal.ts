@@ -1,6 +1,7 @@
 import express from "express"
 import { Terminal } from "../Models/Terminal"
 import { v4 as uuidv4 } from "uuid"
+import { isAdmin } from "../Helpers/verify"
 
 const router = express.Router()
 
@@ -12,7 +13,7 @@ router.get("/terminals", async (req: express.Request, res: express.Response) => 
 	return
 })
 
-router.post("/terminals", async (req: express.Request, res: express.Response) => {
+router.post("/terminals", isAdmin, async (req: express.Request, res: express.Response) => {
 	try {
 		const terminal = new Terminal()
 		const uniqueId = uuidv4()
@@ -44,7 +45,7 @@ router.get("/terminals/:id", async (req: express.Request, res: express.Response)
 	}
 })
 
-router.delete("/terminals/:id", async (req: express.Request, res: express.Response) => {
+router.delete("/terminals/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const terminal = await Terminal.findOne({

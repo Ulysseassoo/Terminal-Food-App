@@ -3,20 +3,20 @@ import { Order } from "../Models/Order"
 import { validationResult } from "express-validator"
 import { productValidator } from "../Validator/productValidator"
 import { Product } from "../Models/Product"
-import { Ingredient } from "../Models/Ingredient"
 import { Category } from "../Models/Category"
+import { isAdmin } from "../Helpers/verify"
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/products", async (req: express.Request, res: express.Response) => {
+router.get("/products", isAdmin, async (req: express.Request, res: express.Response) => {
 	const products = await Product.find({ relations: ["ingredients"] })
 	res.json({ status: 200, data: products })
 	return
 })
 
-router.post("/products", productValidator, async (req: express.Request, res: express.Response) => {
+router.post("/products", productValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
@@ -72,7 +72,7 @@ router.get("/products/:id", async (req: express.Request, res: express.Response) 
 	}
 })
 
-router.put("/orders/:id", productValidator, async (req: express.Request, res: express.Response) => {
+router.put("/products/:id", productValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const errors = validationResult(req)
@@ -117,7 +117,7 @@ router.put("/orders/:id", productValidator, async (req: express.Request, res: ex
 	}
 })
 
-router.delete("/products/:id", async (req: express.Request, res: express.Response) => {
+router.delete("/products/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const product = await Product.findOne({

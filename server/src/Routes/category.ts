@@ -3,6 +3,7 @@ import { Category } from "../Models/Category"
 import { v4 as uuidv4 } from "uuid"
 import { validationResult } from "express-validator"
 import { categoryValidator } from "../Validator/categoryValidator"
+import { isAdmin } from "../Helpers/verify"
 
 const router = express.Router()
 
@@ -14,7 +15,7 @@ router.get("/categories", async (req: express.Request, res: express.Response) =>
 	return
 })
 
-router.post("/categories", categoryValidator, async (req: express.Request, res: express.Response) => {
+router.post("/categories", categoryValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
@@ -57,7 +58,7 @@ router.get("/categories/:id", async (req: express.Request, res: express.Response
 	}
 })
 
-router.put("/categories/:id", categoryValidator, async (req: express.Request, res: express.Response) => {
+router.put("/categories/:id", categoryValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const errors = validationResult(req)
@@ -88,7 +89,7 @@ router.put("/categories/:id", categoryValidator, async (req: express.Request, re
 	}
 })
 
-router.delete("/categories/:id", async (req: express.Request, res: express.Response) => {
+router.delete("/categories/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const category = await Category.findOne({

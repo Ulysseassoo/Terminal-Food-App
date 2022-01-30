@@ -2,18 +2,19 @@ import express from "express"
 import { validationResult } from "express-validator"
 import { ingredientValidator } from "../Validator/ingredientValidator"
 import { Ingredient } from "../Models/Ingredient"
+import { isAdmin } from "../Helpers/verify"
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/ingredients", async (req: express.Request, res: express.Response) => {
+router.get("/ingredients", isAdmin, async (req: express.Request, res: express.Response) => {
 	const ingredients = await Ingredient.find()
 	res.json({ status: 200, data: ingredients })
 	return
 })
 
-router.post("/ingredients", ingredientValidator, async (req: express.Request, res: express.Response) => {
+router.post("/ingredients", ingredientValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
@@ -41,7 +42,7 @@ router.post("/ingredients", ingredientValidator, async (req: express.Request, re
 	}
 })
 
-router.get("/ingredients/:id", async (req: express.Request, res: express.Response) => {
+router.get("/ingredients/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const ingredient = await Ingredient.findOne({
@@ -58,7 +59,7 @@ router.get("/ingredients/:id", async (req: express.Request, res: express.Respons
 	}
 })
 
-router.put("/ingredients/:id", ingredientValidator, async (req: express.Request, res: express.Response) => {
+router.put("/ingredients/:id", ingredientValidator, isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const errors = validationResult(req)
@@ -92,7 +93,7 @@ router.put("/ingredients/:id", ingredientValidator, async (req: express.Request,
 	}
 })
 
-router.delete("/ingredients/:id", async (req: express.Request, res: express.Response) => {
+router.delete("/ingredients/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const ingredient = await Ingredient.findOne({
