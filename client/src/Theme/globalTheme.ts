@@ -13,11 +13,14 @@ export const globalTheme = {
 		title: "'Lato', sans-serif"
 	},
 	size: {
-		s: "",
-		xs: "",
-		m: "",
-		l: "",
-		xl: "",
-		xxl: ""
+		xs: "0.6rem",
+		s: "1rem",
+		m: "1.2rem",
+		l: "2.4rem",
+		xl: "4.6rem",
+		xxl: "6.8rem"
+	},
+	shadow: {
+		text: "1px 3px 6px #00000038"
 	}
 }

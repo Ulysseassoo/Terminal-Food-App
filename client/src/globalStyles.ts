@@ -1,4 +1,9 @@
-import { createGlobalStyle } from "styled-components"
+import { motion } from "framer-motion"
+import styled, { createGlobalStyle } from "styled-components"
+
+type MainStyle = {
+	column?: boolean
+}
 
 export const GlobalStyles = createGlobalStyle`
 /*
@@ -61,4 +66,13 @@ body {
   overflow: hidden;
 }
 
+`
+
+export const Main = styled(motion.main)<MainStyle>`
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: ${({ column }) => (column ? "column" : "row")};
 `
