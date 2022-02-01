@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from "styled-components"
 
 type MainStyle = {
 	column?: boolean
+	background?: string
 }
 
 export const GlobalStyles = createGlobalStyle`
@@ -75,4 +76,6 @@ export const Main = styled(motion.main)<MainStyle>`
 	justify-content: center;
 	align-items: center;
 	flex-direction: ${({ column }) => (column ? "column" : "row")};
+	background-color: ${({ background }) => background};
+	position: relative;
 `

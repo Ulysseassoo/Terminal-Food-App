@@ -25,6 +25,7 @@ declare module "styled-components" {
 		}
 		shadow: {
 			text: string
+			box: string
 		}
 	}
 }

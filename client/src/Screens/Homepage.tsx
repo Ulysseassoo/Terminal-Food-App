@@ -7,7 +7,7 @@ type RowStyle = {
 	flex: string
 	background: string
 	column?: boolean
-	cursor?: boolean
+	$cursor?: boolean
 }
 
 const Homepage = () => {
@@ -57,7 +57,7 @@ const Homepage = () => {
 					<Subtitle variants={item}>Fast & easy</Subtitle>
 				</Row>
 				<Row flex="10%" background={theme.colors.text}></Row>
-				<Row flex="20%" cursor background={theme.colors.secondary} onClick={() => navigate("/accounts")}>
+				<Row flex="20%" $cursor background={theme.colors.secondary} onClick={() => navigate("/accounts")}>
 					<Subtitle variants={start}>
 						<motion.p whileHover={{ opacity: 0.6 }}>Touch to start</motion.p>
 					</Subtitle>
@@ -75,7 +75,7 @@ const Row = styled(motion.div)<RowStyle>`
 	background-color: ${({ background }) => background};
 	width: 100%;
 	flex-direction: ${({ column }) => (column ? "column" : "row")};
-	cursor: ${({ cursor }) => (cursor ? "pointer" : "initial")};
+	cursor: ${({ $cursor }) => ($cursor ? "pointer" : "initial")};
 	gap: 0.5rem;
 	position: relative;
 	& > svg {
@@ -103,7 +103,7 @@ const Line = styled(motion.span)`
 	height: 2px;
 	opacity: 80%;
 `
-const Subtitle = styled(motion.p)`
+const Subtitle = styled(motion.div)`
 	color: ${({ theme }) => theme.colors.text};
 	font-family: ${({ theme }) => theme.fonts.sub};
 	font-weight: 600;
