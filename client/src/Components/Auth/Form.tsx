@@ -1,9 +1,11 @@
+import { motion } from "framer-motion"
 import React from "react"
 import { useForm } from "react-hook-form"
 import { useLocation } from "react-router"
 import { toast } from "react-toastify"
 import styled from "styled-components"
-import { adminLogin, kitchenLogin } from "../../Services/APIs"
+import { adminLogin, kitchenLogin, userLogin } from "../../Services/APIs"
+import SubmitButton from "../SubmitButton"
 
 const Form = () => {
 	const { pathname } = useLocation()
@@ -27,7 +29,8 @@ const Form = () => {
 	} = useForm<DataForm>()
 	const onSubmit = async (formData: DataForm) => {
 		try {
-			const { data }: { data: responseData } = pathname === "/admin" ? await adminLogin(formData) : await kitchenLogin(formData)
+			const { data }: { data: responseData } =
+				pathname === "/admin" ? await adminLogin(formData) : pathname === "/user" ? await userLogin(formData) : await kitchenLogin(formData)
 			localStorage.setItem("token", data.token)
 			toast.success("You are now connected !")
 		} catch (error: any) {
@@ -37,10 +40,14 @@ const Form = () => {
 	return (
 		<Container>
 			<AuthForm onSubmit={handleSubmit(onSubmit)}>
-				<Input aria-invalid={errors.email ? "true" : "false"} type="email" placeholder="email" {...register("email", {})} />
-				<Input type="password" placeholder="password" {...register("password", {})} />
-
-				<Submit type="submit" value="Login" />
+				<Input
+					aria-invalid={errors.email ? "true" : "false"}
+					type="email"
+					placeholder="email"
+					{...register("email", { required: true, minLength: 4 })}
+				/>
+				<Input type="password" placeholder="password" {...register("password", { required: true, minLength: 4 })} />
+				<SubmitButton content="Login" isSubmitting={isSubmitting} />
 			</AuthForm>
 		</Container>
 	)
@@ -75,7 +82,7 @@ const AuthForm = styled.form`
 	gap: 1.5rem;
 	justify-content: center;
 `
-const Submit = styled.input`
+const Submit = styled(motion.input)`
 	margin-top: 2.5rem;
 	font-family: ${({ theme }) => theme.fonts.normal};
 	color: ${({ theme }) => theme.colors.primary};

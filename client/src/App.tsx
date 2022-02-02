@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
 				<Routes location={location} key={location.pathname}>
 					<Route path="/" element={<Homepage />} />
 					<Route path="/accounts" element={<Accounts />} />
-					<Route path="/user" element={<Accounts />} />
+					<Route path="/user" element={<Auth user />} />
 					<Route path="/kitchen" element={<Auth />} />
 					<Route path="/admin" element={<Auth admin />} />
 				</Routes>

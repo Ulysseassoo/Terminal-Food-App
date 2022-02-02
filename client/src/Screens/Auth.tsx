@@ -7,12 +7,15 @@ import { ArrowLeftSquare } from "@styled-icons/bootstrap/ArrowLeftSquare"
 import { useNavigate } from "react-router"
 import { Admin } from "@styled-icons/remix-line/Admin"
 import { Kitchen } from "@styled-icons/material"
+import { Link } from "react-router-dom"
+import { User } from "styled-icons/fa-regular"
 
 type Props = {
 	admin?: boolean
+	user?: boolean
 }
 
-const Auth = ({ admin }: Props) => {
+const Auth = ({ admin, user }: Props) => {
 	const theme = useTheme()
 	const navigate = useNavigate()
 
@@ -24,6 +27,21 @@ const Auth = ({ admin }: Props) => {
 				duration: 0.5
 			}
 		}
+	}
+	if (user) {
+		return (
+			<AnimatePresence>
+				<Container column background={theme.colors.primary} initial="hidden" animate="show" exit="hidden" variants={variants}>
+					<ArrowLeftSquare onClick={() => navigate("/accounts")} />
+					<Title>
+						<User />
+						User
+					</Title>
+					<Form />
+					<NavLink to="/menu">Don't want to connect ? Just order your food here</NavLink>
+				</Container>
+			</AnimatePresence>
+		)
 	}
 
 	return (
@@ -75,5 +93,12 @@ const Title = styled.h1`
 		width: 60px;
 		height: 60px;
 	}
+`
+
+const NavLink = styled(Link)`
+	color: ${({ theme }) => theme.colors.text};
+	text-decoration: none;
+	font-size: ${({ theme }) => theme.size.m};
+	text-shadow: ${({ theme }) => theme.shadow.text};
 `
 export default Auth

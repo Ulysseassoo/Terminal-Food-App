@@ -33,7 +33,7 @@ const LinkText = styled(Link)`
 
 const Container = styled(motion.button)`
 	flex: 1;
-	height: 140px;
+	height: 110px;
 	border-radius: 0.4rem;
 	border: 1px solid ${({ theme }) => theme.colors.text};
 	position: relative;
