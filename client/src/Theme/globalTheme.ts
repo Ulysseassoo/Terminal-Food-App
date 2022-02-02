@@ -5,7 +5,9 @@ export const globalTheme = {
 		lightPrimary: "#FFBF69",
 		lightSecondary: "#DEFEEF",
 		hoverPrimary: "#2EC4B6",
-		text: "#2c2c2c"
+		text: "#2c2c2c",
+		error: "#FF5D5D",
+		background: "#F5F5F5"
 	},
 	fonts: {
 		normal: "'Khand', sans-serif",

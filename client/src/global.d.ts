@@ -9,6 +9,8 @@ declare module "styled-components" {
 			lightSecondary: string
 			hoverPrimary: string
 			text: string
+			error: string
+			background: string
 		}
 		fonts: {
 			normal: string

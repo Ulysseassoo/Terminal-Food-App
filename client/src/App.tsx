@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify"
 import Accounts from "./Screens/Accounts"
 import Auth from "./Screens/Auth"
 import "react-toastify/dist/ReactToastify.css"
+import Shop from "./Screens/Shop"
 
 const App = (): JSX.Element => {
 	const location = useLocation()
@@ -23,6 +24,7 @@ const App = (): JSX.Element => {
 					<Route path="/user" element={<Auth user />} />
 					<Route path="/kitchen" element={<Auth />} />
 					<Route path="/admin" element={<Auth admin />} />
+					<Route path="/menu" element={<Shop />} />
 				</Routes>
 			</AnimatePresence>
 		</ThemeProvider>

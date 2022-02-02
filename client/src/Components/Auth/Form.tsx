@@ -44,9 +44,27 @@ const Form = () => {
 					aria-invalid={errors.email ? "true" : "false"}
 					type="email"
 					placeholder="email"
-					{...register("email", { required: true, minLength: 4 })}
+					{...register("email", {
+						required: "Provide an email",
+						minLength: {
+							value: 4,
+							message: "You email should be at least 4 letters long."
+						}
+					})}
 				/>
-				<Input type="password" placeholder="password" {...register("password", { required: true, minLength: 4 })} />
+				<Errors>{errors.email?.message}</Errors>
+				<Input
+					type="password"
+					placeholder="password"
+					{...register("password", {
+						required: "Provide a password",
+						minLength: {
+							value: 4,
+							message: "Your password should be at least 4 letters long"
+						}
+					})}
+				/>
+				<Errors>{errors.password?.message}</Errors>
 				<SubmitButton content="Login" isSubmitting={isSubmitting} />
 			</AuthForm>
 		</Container>
@@ -82,15 +100,9 @@ const AuthForm = styled.form`
 	gap: 1.5rem;
 	justify-content: center;
 `
-const Submit = styled(motion.input)`
-	margin-top: 2.5rem;
-	font-family: ${({ theme }) => theme.fonts.normal};
-	color: ${({ theme }) => theme.colors.primary};
-	background-color: ${({ theme }) => theme.colors.text};
+const Errors = styled.p`
 	font-size: ${({ theme }) => theme.size.m};
-	border: none;
-	padding: 0.75rem;
-	cursor: pointer;
-	box-shadow: ${({ theme }) => theme.shadow.box};
+	color: ${({ theme }) => theme.colors.text};
+	font-family: ${({ theme }) => theme.fonts.normal};
 `
 export default Form
