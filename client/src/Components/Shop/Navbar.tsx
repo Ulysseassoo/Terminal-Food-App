@@ -26,6 +26,7 @@ const Container = styled.header`
 	align-items: center;
 	width: 100%;
 	padding: 0.5rem 2rem;
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 `
 
 const Logo = styled.div`

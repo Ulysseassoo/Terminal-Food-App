@@ -9,12 +9,12 @@ import SubmitButton from "../SubmitButton"
 
 const Form = () => {
 	const { pathname } = useLocation()
-	type DataForm = {
+	interface DataForm {
 		email: string
 		password: string
 	}
 
-	type responseData = {
+	interface responseData {
 		status: number
 		token: string
 		data: {

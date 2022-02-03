@@ -7,7 +7,8 @@ export const globalTheme = {
 		hoverPrimary: "#2EC4B6",
 		text: "#2c2c2c",
 		error: "#FF5D5D",
-		background: "#F5F5F5"
+		background: "#F5F5F5",
+		white: "#FFF"
 	},
 	fonts: {
 		normal: "'Khand', sans-serif",

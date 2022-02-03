@@ -10,7 +10,7 @@ import { Kitchen } from "@styled-icons/material"
 import { Link } from "react-router-dom"
 import { User } from "styled-icons/fa-regular"
 
-type Props = {
+interface Props {
 	admin?: boolean
 	user?: boolean
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import styled, { useTheme } from "styled-components"
 import { Main } from "../globalStyles"
 
-type RowStyle = {
+interface RowStyle {
 	flex: string
 	background: string
 	column?: boolean

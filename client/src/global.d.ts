@@ -11,6 +11,7 @@ declare module "styled-components" {
 			text: string
 			error: string
 			background: string
+			white: string
 		}
 		fonts: {
 			normal: string

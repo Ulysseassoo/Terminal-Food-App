@@ -21,3 +21,13 @@ export const userLogin = async (postData: loginData) => {
 	const reponse = await axios.post(`${url}/auth`, postData)
 	return reponse
 }
+
+export const getProducts = async () => {
+	const reponse = await axios.get(`${url}/products`)
+	return reponse.data
+}
+
+export const getCategories = async () => {
+	const reponse = await axios.get(`${url}/categories`)
+	return reponse.data
+}
