@@ -1,35 +1,35 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 
 import ProductCard from "./ProductCard"
 import { motion } from "framer-motion"
+import { ProductsContext } from "../../Context/ProductsProvider"
 
 interface SliderProps {
 	ref: any
 }
 
-interface Current {
-	scrollWidth: number
-	offsetWidth: number
-}
-
 const ProductsSlider = () => {
 	const [width, setWidth] = useState(0)
 	const slider = useRef<HTMLDivElement>()
-
+	const { products, productsLoading } = useContext(ProductsContext)!
+	console.log(productsLoading)
 	useEffect(() => {
 		if (null !== slider.current) {
 			setWidth(slider.current?.scrollWidth! - slider.current?.offsetWidth!)
 		}
 	}, [])
 
+	if (productsLoading) {
+		return <></>
+	}
+
 	return (
 		<Container>
 			<MotionSlider drag="x" ref={slider} dragConstraints={{ right: 0, left: -width }}>
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
+				{products.map((product) => {
+					return <ProductCard {...product} key={product.id} />
+				})}
 			</MotionSlider>
 		</Container>
 	)
@@ -42,6 +42,7 @@ const Container = styled(motion.div)`
 	overflow: hidden;
 	width: 100%;
 	padding: 1rem;
+	padding-bottom: 3rem;
 `
 
 const MotionSlider = styled(motion.div)<SliderProps>`
@@ -49,7 +50,7 @@ const MotionSlider = styled(motion.div)<SliderProps>`
 	width: 100%;
 	height: 100%;
 	flex-wrap: nowrap;
-	align-items: center;
+	align-items: end;
 	gap: 2rem;
 	cursor: grab;
 	&:active {

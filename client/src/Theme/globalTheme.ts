@@ -8,7 +8,8 @@ export const globalTheme = {
 		text: "#2c2c2c",
 		error: "#FF5D5D",
 		background: "#F5F5F5",
-		white: "#FFF"
+		white: "#FFF",
+		primaryShadow: "#36E9D8"
 	},
 	fonts: {
 		normal: "'Khand', sans-serif",

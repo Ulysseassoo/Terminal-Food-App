@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios"
 
-type loginData = {
+interface loginData {
 	email: string
 	password: string
 }

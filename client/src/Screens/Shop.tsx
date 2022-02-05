@@ -5,9 +5,13 @@ import Selector from "../Components/Shop/Selector"
 import ProductsSlider from "../Components/Shop/ProductsSlider"
 import { Main } from "../globalStyles"
 import Image from "../assets/Tracé 6.png"
+import { useParams } from "react-router"
+import Modal from "../Components/Shop/Modal"
+import { AnimatePresence } from "framer-motion"
 
 const Shop = () => {
 	const theme = useTheme()
+	const params = useParams()
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -19,7 +23,8 @@ const Shop = () => {
 		}
 	}
 	return (
-		<Container column background={theme.colors.background} initial="hidden" animate="show" exit="hidden" variants={variants}>
+		<Container column background={theme.colors.background}>
+			{params.id && <Modal />}
 			<Navbar />
 			<Flex>
 				<Selector />

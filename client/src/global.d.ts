@@ -12,6 +12,7 @@ declare module "styled-components" {
 			error: string
 			background: string
 			white: string
+			primaryShadow: string
 		}
 		fonts: {
 			normal: string
@@ -30,5 +31,29 @@ declare module "styled-components" {
 			text: string
 			box: string
 		}
+	}
+}
+
+declare global {
+	interface Category {
+		id: number
+		name: string
+	}
+	interface Ingredient {
+		id: number
+		name: string
+		quantity: number
+		important: boolean
+	}
+
+	interface Product {
+		id: number
+		name: string
+		description: string
+		calories: string
+		price: number
+		ingredients: Ingredient[]
+		custom: boolean
+		category: Category
 	}
 }
