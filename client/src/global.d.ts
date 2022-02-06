@@ -56,6 +56,7 @@ declare global {
 		price: number
 		ingredients: Ingredient[]
 		custom: boolean
+		available: boolean
 		category: Category
 	}
 }

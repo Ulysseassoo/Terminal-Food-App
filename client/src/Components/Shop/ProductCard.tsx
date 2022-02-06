@@ -1,5 +1,5 @@
-import { motion } from "framer-motion"
-import React, { useContext } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import React, { useContext, useState } from "react"
 import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled, { css, useTheme } from "styled-components"
@@ -9,6 +9,7 @@ import ProductImage from "../../assets/pizzaz.png"
 import { CartContext } from "../../Context/CartProvider"
 import { Trash } from "@styled-icons/bootstrap"
 import { MinusSquare } from "@styled-icons/fa-regular"
+import Modal from "./Modal"
 
 interface Props {
 	$cart?: boolean
@@ -19,6 +20,7 @@ interface Props {
 	price: number
 	description: string
 	custom: boolean
+	available: boolean
 	ingredients: Ingredient[]
 	quantity?: number
 }
@@ -27,40 +29,45 @@ interface CartProps {
 	$cart?: boolean
 }
 
-const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity }: Props) => {
+const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available }: Props) => {
 	const theme = useTheme()
 	const navigate = useNavigate()
+	const [editMode, setEditMode] = useState(false)
 	const { addProductToCart, deleteProductFromCart, reduceItemQuantity } = useContext(CartContext)!
 
 	const addProduct = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		event.stopPropagation()
-		addProductToCart({ id, calories, category, name, price, description, custom, ingredients })
+		addProductToCart({ id, calories, category, name, price, description, custom, ingredients, available })
 		toast.success("Product added to cart !")
 	}
 
 	if ($cart) {
 		return (
-			<Container $cart>
-				<Trash onClick={() => deleteProductFromCart(id)} />
-				<ImageContainer $cart>
-					<img src={ProductImage} alt="Pizza Product" />
-				</ImageContainer>
-				<Content $cart>
-					<SubTitle $cart>{name}</SubTitle>
-					{custom && <Tag>Custom Product</Tag>}
-					<Text $cart> {calories}</Text>
-					<QuantityContainer>
-						<PlusSquare onClick={() => addProductToCart({ id, calories, category, name, price, description, custom, ingredients })} />
-						<Counter>{quantity}</Counter>
-						<MinusSquare
-							onClick={() => {
-								quantity! >= 1 && reduceItemQuantity(id)
-							}}
-						/>
-					</QuantityContainer>
-					<Price $cart>{price * quantity!}$</Price>
-				</Content>
-			</Container>
+			<AnimatePresence>
+				<Container $cart>
+					<Trash onClick={() => deleteProductFromCart(id)} />
+					<ImageContainer $cart>
+						<img src={ProductImage} alt="Pizza Product" />
+					</ImageContainer>
+					<Content $cart>
+						<SubTitle $cart>{name}</SubTitle>
+						{custom && <Tag>Custom Product</Tag>}
+						<Text $cart> {calories}</Text>
+						<QuantityContainer>
+							<PlusSquare onClick={() => addProductToCart({ id, calories, category, name, price, description, custom, ingredients, available })} />
+							<Counter>{quantity}</Counter>
+							<MinusSquare
+								onClick={() => {
+									quantity! >= 1 && reduceItemQuantity(id)
+								}}
+							/>
+						</QuantityContainer>
+						<Price $cart>{price * quantity!}$</Price>
+						<Button onClick={() => setEditMode(true)}>Edit</Button>
+					</Content>
+				</Container>
+				{editMode && <Modal cartItemId={id} setEditMode={setEditMode} key={id} />}
+			</AnimatePresence>
 		)
 	}
 
@@ -246,6 +253,20 @@ const Counter = styled.p`
 	color: ${({ theme }) => theme.colors.primary};
 	text-shadow: ${({ theme }) => theme.shadow.text};
 	font-size: ${({ theme }) => theme.size.m};
+`
+
+const Button = styled.button`
+	width: 100%;
+	font-size: ${({ theme }) => theme.size.s};
+	border: none;
+	color: ${({ theme }) => theme.colors.white};
+	background-color: ${({ theme }) => theme.colors.text};
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: 0.3s ease-in;
+	&:hover {
+		opacity: 0.8;
+	}
 `
 
 export default ProductCard

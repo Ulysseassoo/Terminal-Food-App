@@ -9,6 +9,7 @@ type CartContextType = {
 	cart: Cart[]
 	setCart: React.Dispatch<React.SetStateAction<Cart[]>>
 	addProductToCart: (product: Product) => void
+	updateCartProduct: (product: Product) => void
 	deleteProductFromCart: (id: number) => void
 	reduceItemQuantity: (id: number) => void
 	getTotalPrice: () => number
@@ -20,6 +21,7 @@ const initialState = {
 	addProductToCart: () => {},
 	deleteProductFromCart: () => {},
 	reduceItemQuantity: () => {},
+	updateCartProduct: () => {},
 	getTotalPrice: () => 0
 }
 
@@ -41,6 +43,18 @@ export const CartProvider: React.FC = ({ children }) => {
 		}
 		const cartItem: Cart = { product: payload, quantity: 1 }
 		const newCart = [...cart, cartItem]
+		return setCart(newCart)
+	}
+
+	const updateCartProduct = (payload: Product) => {
+		const newCart = [
+			...cart.map((item) => {
+				if (item.product.id === payload.id) {
+					return { ...item, product: { ...item.product, ...payload, id: payload.custom ? new Date().valueOf() : item.product.id } }
+				}
+				return item
+			})
+		]
 		return setCart(newCart)
 	}
 
@@ -69,7 +83,7 @@ export const CartProvider: React.FC = ({ children }) => {
 	}
 
 	return (
-		<CartContext.Provider value={{ cart, setCart, addProductToCart, deleteProductFromCart, getTotalPrice, reduceItemQuantity }}>
+		<CartContext.Provider value={{ cart, setCart, addProductToCart, deleteProductFromCart, getTotalPrice, reduceItemQuantity, updateCartProduct }}>
 			{children}
 		</CartContext.Provider>
 	)

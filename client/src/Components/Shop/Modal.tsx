@@ -11,13 +11,20 @@ import { PlusCircle } from "@styled-icons/boxicons-solid/PlusCircle"
 import { MinusCircle } from "@styled-icons/boxicons-solid/MinusCircle"
 import _ from "lodash"
 
-const Modal = () => {
+interface Props {
+	cartItemId?: number
+	setEditMode?: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Modal = ({ cartItemId, setEditMode }: Props) => {
 	const { id, category } = useParams()
 	const navigate = useNavigate()
 	const { products, productsLoading } = useContext(ProductsContext)!
-	const { addProductToCart } = useContext(CartContext)!
+	const { addProductToCart, cart, updateCartProduct } = useContext(CartContext)!
 	const numberId = parseInt(id!)
-	const selectedProduct = products.find((product) => product.id === numberId)
+	const selectedProduct = cartItemId
+		? cart.find((item) => item.product.id === cartItemId)?.product
+		: products.find((product) => product.id === numberId)
 	const [customProduct, setCustomProduct] = useState<Product>(selectedProduct!)
 
 	const variants = {
@@ -37,8 +44,15 @@ const Modal = () => {
 		}
 	}
 
-	const addProduct = () => {
-		if (!_.isEqual(customProduct, selectedProduct!)) {
+	const addProduct = (payload: Product | null = null) => {
+		const objectsEqual = _.isEqual(customProduct, selectedProduct!)
+		if (payload?.id) {
+			updateCartProduct({ ...payload, custom: objectsEqual ? false : true })
+			toast.success("Product updated !")
+			setEditMode!(false)
+			return
+		}
+		if (!objectsEqual) {
 			addProductToCart({ ...customProduct, custom: true, id: new Date().valueOf() })
 		} else {
 			addProductToCart(customProduct)
@@ -57,6 +71,43 @@ const Modal = () => {
 
 	if (productsLoading) {
 		return <></>
+	}
+
+	if (cartItemId !== undefined) {
+		return (
+			<OtherContainer column initial="hidden" animate="show" exit="hidden" variants={variants}>
+				<Close onClick={() => setEditMode!(false)} />
+				<Left>
+					<Title>{customProduct.name}</Title>
+					<Line />
+					<Wrapper>
+						<Content>
+							<Column>
+								<Subtitle>Description</Subtitle>
+								{customProduct.description}
+							</Column>
+							<Column>
+								<Subtitle>Ingredients</Subtitle>
+								{customProduct.ingredients.map((ingredient) => (
+									<IngredientsContainer key={ingredient.id}>
+										{/* <PlusCircle /> */}
+										<MinusCircle onClick={() => removeIngredientFromProduct(ingredient.id)} />
+										<p key={ingredient.id}>{ingredient.name} </p>
+									</IngredientsContainer>
+								))}
+							</Column>
+							<Row>
+								<Subtitle>Price</Subtitle>
+								<Total>{customProduct.price} $</Total>
+							</Row>
+							<Row>
+								<Button onClick={() => addProduct(customProduct)}>Update</Button>
+							</Row>
+						</Content>
+					</Wrapper>
+				</Left>
+			</OtherContainer>
+		)
 	}
 
 	return (
@@ -120,6 +171,10 @@ const Container = styled(Main)`
 			opacity: 0.5;
 		}
 	}
+`
+
+const OtherContainer = styled(Container)`
+	justify-content: initial;
 `
 
 const Left = styled.div`
