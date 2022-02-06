@@ -3,10 +3,12 @@ import React, { useContext } from "react"
 import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled, { css, useTheme } from "styled-components"
+import { PlusSquare } from "styled-icons/bootstrap"
 import { PlusSquareFill } from "styled-icons/bootstrap"
 import ProductImage from "../../assets/pizzaz.png"
 import { CartContext } from "../../Context/CartProvider"
 import { Trash } from "@styled-icons/bootstrap"
+import { MinusSquare } from "@styled-icons/fa-regular"
 
 interface Props {
 	$cart?: boolean
@@ -18,16 +20,17 @@ interface Props {
 	description: string
 	custom: boolean
 	ingredients: Ingredient[]
+	quantity: number
 }
 
 interface CartProps {
 	$cart?: boolean
 }
 
-const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart }: Props) => {
+const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity }: Props) => {
 	const theme = useTheme()
 	const navigate = useNavigate()
-	const { addProductToCart, deleteProductFromCart } = useContext(CartContext)!
+	const { addProductToCart, deleteProductFromCart, reduceItemQuantity } = useContext(CartContext)!
 
 	const addProduct = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		event.stopPropagation()
@@ -45,7 +48,16 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 				<Content $cart>
 					<SubTitle $cart>{name}</SubTitle>
 					<Text $cart> {calories}</Text>
-					<Price $cart>{price}$</Price>
+					<QuantityContainer>
+						<PlusSquare onClick={() => addProductToCart({ id, calories, category, name, price, description, custom, ingredients })} />
+						<Counter>{quantity}</Counter>
+						<MinusSquare
+							onClick={() => {
+								quantity! >= 1 && reduceItemQuantity(id)
+							}}
+						/>
+					</QuantityContainer>
+					<Price $cart>{price * quantity}$</Price>
 				</Content>
 			</Container>
 		)
@@ -191,7 +203,6 @@ const PriceContainer = styled.div`
 
 const Price = styled.p<CartProps>`
 	display: contents;
-	font-weight: 600;
 	font-family: ${({ theme }) => theme.fonts.normal};
 	color: inherit;
 	font-size: ${({ theme }) => theme.size.l};
@@ -201,6 +212,29 @@ const Price = styled.p<CartProps>`
 			font-size: ${({ theme }) => theme.size.m};
 			color: ${({ theme }) => theme.colors.secondary};
 		`}
+`
+
+const QuantityContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 50%;
+	& svg {
+		width: 20px;
+		height: 20px;
+		color: ${({ theme }) => theme.colors.text};
+		cursor: pointer;
+		transition: 0.3 ease-in-out;
+		&:hover {
+			opacity: 0.6;
+		}
+	}
+`
+
+const Counter = styled.p`
+	color: ${({ theme }) => theme.colors.primary};
+	text-shadow: ${({ theme }) => theme.shadow.text};
+	font-size: ${({ theme }) => theme.size.m};
 `
 
 export default ProductCard

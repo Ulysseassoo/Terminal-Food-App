@@ -33,8 +33,8 @@ const Cart = ({ setShowCart }: Props) => {
 				<Close onClick={() => setShowCart(false)} />
 			</Row>
 			<CartProducts>
-				{cart.map((product: Product) => (
-					<ProductCard {...product} $cart key={product.id} />
+				{cart.map(({ product, quantity }) => (
+					<ProductCard {...product} quantity={quantity} $cart key={product.id} />
 				))}
 			</CartProducts>
 			<Column>
@@ -107,12 +107,13 @@ const Price = styled.p`
 	font-size: ${({ theme }) => theme.size.m};
 	color: ${({ theme }) => theme.colors.secondary};
 	font-family: ${({ theme }) => theme.fonts.normal};
+	font-weight: bold;
 `
 
 const Button = styled.div`
 	padding: 0.5rem 0;
 	width: 100%;
-	font-size: ${({ theme }) => theme.size.l};
+	font-size: ${({ theme }) => theme.size.m};
 	color: ${({ theme }) => theme.colors.white};
 	background-color: ${({ theme }) => theme.colors.primary};
 	font-family: ${({ theme }) => theme.fonts.normal};
@@ -120,6 +121,7 @@ const Button = styled.div`
 	text-transform: uppercase;
 	text-align: center;
 	border-radius: 0.5rem;
+	cursor: pointer;
 `
 
 export default Cart
