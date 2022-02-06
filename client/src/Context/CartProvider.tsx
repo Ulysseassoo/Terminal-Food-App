@@ -5,9 +5,18 @@ type CartContextType = {
 	setCart: React.Dispatch<React.SetStateAction<Product[]>>
 	addProductToCart: (product: Product) => void
 	deleteProductFromCart: (id: number) => void
+	getTotalPrice: () => number
 }
 
-export const CartContext = createContext<CartContextType | null>(null)
+const initialState = {
+	cart: [],
+	setCart: () => [],
+	addProductToCart: () => {},
+	deleteProductFromCart: () => {},
+	getTotalPrice: () => 0
+}
+
+export const CartContext = createContext<CartContextType>(initialState)
 
 export const CartProvider: React.FC = ({ children }) => {
 	const [cart, setCart] = useState<Product[]>([])
@@ -22,5 +31,13 @@ export const CartProvider: React.FC = ({ children }) => {
 		return setCart(newCart)
 	}
 
-	return <CartContext.Provider value={{ cart, setCart, addProductToCart, deleteProductFromCart }}>{children}</CartContext.Provider>
+	const getTotalPrice = () => {
+		if (cart.length > 0) {
+			const reducer = (previousValue: Product, currentValue: Product) => previousValue.price + currentValue.price
+			return cart.reduce(reducer)
+		}
+		return 0
+	}
+
+	return <CartContext.Provider value={{ cart, setCart, addProductToCart, deleteProductFromCart, getTotalPrice }}>{children}</CartContext.Provider>
 }

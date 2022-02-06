@@ -9,7 +9,8 @@ export const globalTheme = {
 		error: "#FF5D5D",
 		background: "#F5F5F5",
 		white: "#FFF",
-		primaryShadow: "#36E9D8"
+		primaryShadow: "#36E9D8",
+		backgroundShadow: "#0000003b"
 	},
 	fonts: {
 		normal: "'Khand', sans-serif",
@@ -20,7 +21,7 @@ export const globalTheme = {
 		xs: "0.6rem",
 		s: "1rem",
 		m: "1.2rem",
-		l: "2.4rem",
+		l: "2rem",
 		xl: "4.6rem",
 		xxl: "6.8rem"
 	},

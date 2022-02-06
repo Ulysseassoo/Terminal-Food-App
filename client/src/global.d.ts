@@ -13,6 +13,7 @@ declare module "styled-components" {
 			background: string
 			white: string
 			primaryShadow: string
+			backgroundShadow: string
 		}
 		fonts: {
 			normal: string

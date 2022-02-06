@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css"
 import Shop from "./Screens/Shop"
 import Modal from "./Components/Shop/Modal"
 import { ProductsProvider } from "./Context/ProductsProvider"
+import { CartProvider } from "./Context/CartProvider"
 
 const App = (): JSX.Element => {
 	const location = useLocation()
@@ -20,17 +21,19 @@ const App = (): JSX.Element => {
 			<ToastContainer />
 			<GlobalStyles />
 			<ProductsProvider>
-				<AnimatePresence exitBeforeEnter initial={false}>
-					<Routes location={location} key={location.pathname}>
-						<Route path="/" element={<Homepage />} />
-						<Route path="/accounts" element={<Accounts />} />
-						<Route path="/user" element={<Auth user />} />
-						<Route path="/kitchen" element={<Auth />} />
-						<Route path="/admin" element={<Auth admin />} />
-						<Route path="/menu" element={<Shop />} />
-						<Route path="/menu/:product/:id" element={<Shop />} />
-					</Routes>
-				</AnimatePresence>
+				<CartProvider>
+					<AnimatePresence exitBeforeEnter initial={false}>
+						<Routes location={location} key={location.pathname}>
+							<Route path="/" element={<Homepage />} />
+							<Route path="/accounts" element={<Accounts />} />
+							<Route path="/user" element={<Auth user />} />
+							<Route path="/kitchen" element={<Auth />} />
+							<Route path="/admin" element={<Auth admin />} />
+							<Route path="/menu" element={<Shop />} />
+							<Route path="/menu/:product/:id" element={<Shop />} />
+						</Routes>
+					</AnimatePresence>
+				</CartProvider>
 			</ProductsProvider>
 		</ThemeProvider>
 	)

@@ -5,16 +5,25 @@ import { Close } from "styled-icons/material"
 import { Main } from "../../globalStyles"
 import Image from "../../assets/pizzaz.png"
 import { ProductsContext } from "../../Context/ProductsProvider"
+import { CartContext } from "../../Context/CartProvider"
+import { toast } from "react-toastify"
 
 const Modal = () => {
 	const { id, category } = useParams()
 	const navigate = useNavigate()
 	const { products, productsLoading } = useContext(ProductsContext)!
+	const { addProductToCart } = useContext(CartContext)!
 	const numberId = parseInt(id!)
 	const selectedProduct = products.find((product) => product.id === numberId)
 
 	const variants = {
-		hidden: { y: "-100%" },
+		hidden: {
+			y: "-100%",
+			transition: {
+				duration: 0.6,
+				staggerChildren: 0.5
+			}
+		},
 		show: {
 			y: 0,
 			transition: {
@@ -22,6 +31,12 @@ const Modal = () => {
 				staggerChildren: 0.5
 			}
 		}
+	}
+
+	const addProduct = () => {
+		addProductToCart(selectedProduct!)
+		toast.success("Product added to cart !")
+		navigate("/menu")
 	}
 
 	if (productsLoading) {
@@ -46,7 +61,7 @@ const Modal = () => {
 						<Column>
 							<Subtitle>Ingredients</Subtitle>
 							{selectedProduct!.ingredients.map((ingredient) => (
-								<p>{ingredient.name} </p>
+								<p key={ingredient.id}>{ingredient.name} </p>
 							))}
 						</Column>
 						<Row>
@@ -55,7 +70,7 @@ const Modal = () => {
 						</Row>
 						<Row>
 							{" "}
-							<Button>Add to cart</Button>
+							<Button onClick={() => addProduct()}>Add to cart</Button>
 						</Row>
 					</Content>
 				</Wrapper>

@@ -1,21 +1,36 @@
-import React from "react"
+import React, { useContext, useState } from "react"
 import styled from "styled-components"
 import { Pizza } from "@styled-icons/ionicons-solid/Pizza"
 import { ShoppingCart } from "@styled-icons/feather/ShoppingCart"
 import { Search } from "@styled-icons/feather/Search"
+import { CartContext } from "../../Context/CartProvider"
+import Cart from "./Cart"
+import { AnimatePresence } from "framer-motion"
 
 const Navbar = () => {
+	const { cart } = useContext(CartContext)!
+	const [showCart, setShowCart] = useState(false)
+
+	const uniqueCartLength = [...new Set(cart.map((product) => product.id))].length
+
 	return (
-		<Container>
-			<Logo>
-				Pizz
-				<Pizza /> restaurant
-			</Logo>
-			<Icons>
-				<Search />
-				<ShoppingCart />
-			</Icons>
-		</Container>
+		<AnimatePresence>
+			{showCart && <Shadow key="shadow" />}
+			{showCart && <Cart setShowCart={setShowCart} key="cartShow" />}
+			<Container>
+				<Logo>
+					Pizz
+					<Pizza /> restaurant
+				</Logo>
+				<Icons>
+					<Search />
+					<CartContainer>
+						<Notifications>{uniqueCartLength}</Notifications>
+						<ShoppingCart onClick={() => setShowCart(true)} />
+					</CartContainer>
+				</Icons>
+			</Container>
+		</AnimatePresence>
 	)
 }
 
@@ -58,6 +73,39 @@ const Icons = styled.div`
 		color: ${({ theme }) => theme.colors.text};
 		cursor: pointer;
 	}
+`
+
+const CartContainer = styled.div`
+	height: 35px;
+	width: 35px;
+	position: relative;
+`
+
+const Notifications = styled.p`
+	background-color: ${({ theme }) => theme.colors.secondary};
+	color: ${({ theme }) => theme.colors.text};
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	position: absolute;
+	top: -5px;
+	left: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: ${({ theme }) => theme.size.s};
+	font-family: ${({ theme }) => theme.fonts.normal};
+	box-shadow: rgb(235, 163, 64) 3px 3px 6px 0px inset, rgb(188, 138, 72) -3px -3px 6px 1px inset;
+	font-weight: 600;
+`
+
+const Shadow = styled.div`
+	height: 100%;
+	width: 100%;
+	inset: 0;
+	position: absolute;
+	background-color: ${({ theme }) => theme.colors.backgroundShadow};
+	z-index: 30;
 `
 
 export default Navbar
