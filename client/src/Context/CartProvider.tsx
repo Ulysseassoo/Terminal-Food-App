@@ -33,8 +33,9 @@ export const CartProvider: React.FC = ({ children }) => {
 
 	const getTotalPrice = () => {
 		if (cart.length > 0) {
-			const reducer = (previousValue: Product, currentValue: Product) => previousValue.price + currentValue.price
-			return cart.reduce(reducer)
+			const cartPrices = cart.map((product) => product.price)
+			const reducer = (previousValue: number, currentValue: number) => previousValue + currentValue
+			return cartPrices.reduce(reducer)
 		}
 		return 0
 	}
