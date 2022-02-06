@@ -10,7 +10,8 @@ export const globalTheme = {
 		background: "#F5F5F5",
 		white: "#FFF",
 		primaryShadow: "#36E9D8",
-		backgroundShadow: "#0000003b"
+		backgroundShadow: "#0000003b",
+		success: "#0a6950"
 	},
 	fonts: {
 		normal: "'Khand', sans-serif",

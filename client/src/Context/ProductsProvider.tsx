@@ -19,7 +19,6 @@ export const ProductsProvider: React.FC = ({ children }) => {
 			let { data } = await getProducts()
 			setProducts(data)
 			setProductsLoading(false)
-			console.log(data)
 		} catch (error) {
 			console.log(error)
 		}

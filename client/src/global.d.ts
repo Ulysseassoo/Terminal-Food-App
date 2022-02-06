@@ -14,6 +14,7 @@ declare module "styled-components" {
 			white: string
 			primaryShadow: string
 			backgroundShadow: string
+			success: string
 		}
 		fonts: {
 			normal: string

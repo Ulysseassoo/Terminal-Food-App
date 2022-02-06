@@ -20,7 +20,7 @@ interface Props {
 	description: string
 	custom: boolean
 	ingredients: Ingredient[]
-	quantity: number
+	quantity?: number
 }
 
 interface CartProps {
@@ -47,6 +47,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 				</ImageContainer>
 				<Content $cart>
 					<SubTitle $cart>{name}</SubTitle>
+					{custom && <Tag>Custom Product</Tag>}
 					<Text $cart> {calories}</Text>
 					<QuantityContainer>
 						<PlusSquare onClick={() => addProductToCart({ id, calories, category, name, price, description, custom, ingredients })} />
@@ -57,7 +58,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 							}}
 						/>
 					</QuantityContainer>
-					<Price $cart>{price * quantity}$</Price>
+					<Price $cart>{price * quantity!}$</Price>
 				</Content>
 			</Container>
 		)
@@ -97,7 +98,7 @@ const Container = styled(motion.div)<CartProps>`
 	${({ $cart }) =>
 		$cart &&
 		css`
-			height: 180px;
+			height: 200px;
 			box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 10px;
 			cursor: initial;
 			min-width: 100%;
@@ -158,6 +159,7 @@ const Content = styled.div<CartProps>`
 			width: 100%;
 			justify-content: center;
 			align-items: start;
+			gap: 0.2rem;
 		`}
 `
 
@@ -166,6 +168,15 @@ const SubTitle = styled.p<CartProps>`
 	font-size: ${({ theme }) => theme.size.m};
 	color: inherit;
 	font-weight: 600;
+`
+
+const Tag = styled.p`
+	padding: 0.2rem;
+	border-radius: 0.5rem;
+	background-color: ${({ theme }) => theme.colors.secondary};
+	color: ${({ theme }) => theme.colors.text};
+	font-size: ${({ theme }) => theme.size.s};
+	font-family: ${({ theme }) => theme.fonts.sub};
 `
 
 const Text = styled.span<CartProps>`

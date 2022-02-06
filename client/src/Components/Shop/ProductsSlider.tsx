@@ -13,7 +13,6 @@ const ProductsSlider = () => {
 	const [width, setWidth] = useState(0)
 	const slider = useRef<HTMLDivElement>()
 	const { products, productsLoading } = useContext(ProductsContext)!
-	console.log(productsLoading)
 	useEffect(() => {
 		if (null !== slider.current) {
 			setWidth(slider.current?.scrollWidth! - slider.current?.offsetWidth!)

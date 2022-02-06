@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import styled from "styled-components"
 import { Close } from "styled-icons/material"
@@ -7,6 +7,9 @@ import Image from "../../assets/pizzaz.png"
 import { ProductsContext } from "../../Context/ProductsProvider"
 import { CartContext } from "../../Context/CartProvider"
 import { toast } from "react-toastify"
+import { PlusCircle } from "@styled-icons/boxicons-solid/PlusCircle"
+import { MinusCircle } from "@styled-icons/boxicons-solid/MinusCircle"
+import _ from "lodash"
 
 const Modal = () => {
 	const { id, category } = useParams()
@@ -15,6 +18,7 @@ const Modal = () => {
 	const { addProductToCart } = useContext(CartContext)!
 	const numberId = parseInt(id!)
 	const selectedProduct = products.find((product) => product.id === numberId)
+	const [customProduct, setCustomProduct] = useState<Product>(selectedProduct!)
 
 	const variants = {
 		hidden: {
@@ -34,9 +38,21 @@ const Modal = () => {
 	}
 
 	const addProduct = () => {
-		addProductToCart(selectedProduct!)
+		if (!_.isEqual(customProduct, selectedProduct!)) {
+			addProductToCart({ ...customProduct, custom: true, id: new Date().valueOf() })
+		} else {
+			addProductToCart(customProduct)
+		}
 		toast.success("Product added to cart !")
 		navigate("/menu")
+	}
+
+	const removeIngredientFromProduct = (id: number) => {
+		if (customProduct.ingredients.length <= 1) return toast.error("You need to have at least 1 ingredient")
+		const selectedIngredient = customProduct.ingredients.find((ingredient) => ingredient.id === id)
+		if (selectedIngredient?.important) return toast.error("You can't delete an essential ingredient !")
+		const modifiedProduct = { ...customProduct, ingredients: customProduct.ingredients.filter((ingredient) => ingredient.id !== id) }
+		setCustomProduct(modifiedProduct)
 	}
 
 	if (productsLoading) {
@@ -47,7 +63,7 @@ const Modal = () => {
 		<Container column initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Close onClick={() => navigate("/menu")} />
 			<Left>
-				<Title>{selectedProduct!.name}</Title>
+				<Title>{customProduct.name}</Title>
 				<Line />
 				<Wrapper>
 					<ImageContainer>
@@ -56,17 +72,21 @@ const Modal = () => {
 					<Content>
 						<Column>
 							<Subtitle>Description</Subtitle>
-							{selectedProduct!.description}
+							{customProduct.description}
 						</Column>
 						<Column>
 							<Subtitle>Ingredients</Subtitle>
-							{selectedProduct!.ingredients.map((ingredient) => (
-								<p key={ingredient.id}>{ingredient.name} </p>
+							{customProduct.ingredients.map((ingredient) => (
+								<IngredientsContainer key={ingredient.id}>
+									{/* <PlusCircle /> */}
+									<MinusCircle onClick={() => removeIngredientFromProduct(ingredient.id)} />
+									<p key={ingredient.id}>{ingredient.name} </p>
+								</IngredientsContainer>
 							))}
 						</Column>
 						<Row>
 							<Subtitle>Price</Subtitle>
-							<Total>{selectedProduct!.price} $</Total>
+							<Total>{customProduct.price} $</Total>
 						</Row>
 						<Row>
 							{" "}
@@ -86,7 +106,7 @@ const Container = styled(Main)`
 	inset: 0;
 	background-color: ${({ theme }) => theme.colors.background};
 	z-index: 10;
-	& svg {
+	& > svg {
 		width: 50px;
 		height: 50px;
 		color: ${({ theme }) => theme.colors.text};
@@ -181,6 +201,22 @@ const Button = styled.button`
 	border: none;
 	font-weight: bold;
 	cursor: pointer;
+`
+
+const IngredientsContainer = styled.div`
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	& > svg {
+		height: 20px;
+		width: 20px;
+		cursor: pointer;
+		color: ${({ theme }) => theme.colors.error};
+		/* &:first-child {
+			color: ${({ theme }) => theme.colors.success};
+		} */
+	}
 `
 
 export default Modal

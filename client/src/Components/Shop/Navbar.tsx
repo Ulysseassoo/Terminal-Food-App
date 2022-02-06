@@ -11,8 +11,6 @@ const Navbar = () => {
 	const { cart } = useContext(CartContext)!
 	const [showCart, setShowCart] = useState(false)
 
-	const uniqueCartLength = [...new Set(cart.map((product) => product.id))].length
-
 	return (
 		<AnimatePresence>
 			{showCart && <Shadow key="shadow" />}
@@ -25,7 +23,7 @@ const Navbar = () => {
 				<Icons>
 					<Search />
 					<CartContainer>
-						<Notifications>{uniqueCartLength}</Notifications>
+						<Notifications>{cart.length}</Notifications>
 						<ShoppingCart onClick={() => setShowCart(true)} />
 					</CartContainer>
 				</Icons>
