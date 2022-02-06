@@ -45,7 +45,7 @@ router.post("/auth", userValidator, async (req: express.Request, res: express.Re
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: errors
 		})
@@ -66,7 +66,7 @@ router.post("/auth", userValidator, async (req: express.Request, res: express.Re
 		sendToken(user, 200, res)
 		return
 	} catch (error) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: "Invalid credentials"
 		})
@@ -78,7 +78,7 @@ router.post("/kitchen", userValidator, async (req: express.Request, res: express
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: errors
 		})
@@ -94,17 +94,17 @@ router.post("/kitchen", userValidator, async (req: express.Request, res: express
 			}
 		})
 		if (!user) throw Error
+		const isMatch = bcrypt.compareSync(password, user.password)
+		if (isMatch === false) throw Error
 		if (user.role !== "kitchen")
-			return res.status(401).send({
+			return res.status(401).json({
 				status: 401,
 				data: "Not authorized"
 			})
-		const isMatch = bcrypt.compareSync(password, user.password)
-		if (isMatch === false) throw Error
 		sendToken(user, 200, res)
 		return
 	} catch (error) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: "Invalid credentials"
 		})
@@ -116,7 +116,7 @@ router.post("/admin", userValidator, async (req: express.Request, res: express.R
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: errors
 		})
@@ -132,17 +132,17 @@ router.post("/admin", userValidator, async (req: express.Request, res: express.R
 			}
 		})
 		if (!user) throw Error
+		const isMatch = bcrypt.compareSync(password, user.password)
+		if (isMatch === false) throw Error
 		if (user.role !== "admin")
-			return res.status(401).send({
+			return res.status(401).json({
 				status: 401,
 				data: "Not authorized"
 			})
-		const isMatch = bcrypt.compareSync(password, user.password)
-		if (isMatch === false) throw Error
 		sendToken(user, 200, res)
 		return
 	} catch (error) {
-		res.status(401).send({
+		res.status(401).json({
 			status: 401,
 			data: "Invalid credentials"
 		})

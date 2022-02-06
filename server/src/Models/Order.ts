@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Product } from "./Product"
+import { ProductToOrder } from "./ProductToOrder"
 import { State } from "./State"
 import { Terminal } from "./Terminal"
 import { User } from "./User"
@@ -28,6 +29,8 @@ export class Order extends BaseEntity {
 	@ManyToOne(() => State, (state) => state.orders)
 	state: State
 
-	@ManyToMany(() => Product, (product) => product.has)
-	products: Product[]
+	@OneToMany(() => ProductToOrder, (productToOrder) => productToOrder.order, {
+		cascade: true
+	})
+	public productToOrders!: ProductToOrder[]
 }

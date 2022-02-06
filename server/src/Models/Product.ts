@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne
 import { Category } from "./Category"
 import { Ingredient } from "./Ingredient"
 import { Order } from "./Order"
+import { ProductToOrder } from "./ProductToOrder"
 import { User } from "./User"
 
 @Entity()
@@ -27,11 +28,10 @@ export class Product extends BaseEntity {
 	@ManyToOne(() => Category, (category) => category.products)
 	category: Category
 
-	@ManyToMany(() => Order, (order) => order.products, {
+	@OneToMany(() => ProductToOrder, (productToOrder) => productToOrder.product, {
 		cascade: true
 	})
-	@JoinTable()
-	has: Order[]
+	public productToOrders!: ProductToOrder[]
 
 	@ManyToMany(() => Ingredient, (ingredient) => ingredient.has, {
 		cascade: true

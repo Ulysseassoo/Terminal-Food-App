@@ -6,14 +6,19 @@ import { State } from "../Models/State"
 import { Terminal } from "../Models/Terminal"
 import { User } from "../Models/User"
 import { Product } from "../Models/Product"
-import { isAdmin, isKitchen } from "../Helpers/verify"
+import { isAdmin, isKitchen, isNotUser } from "../Helpers/verify"
+import { ProductToOrder } from "../Models/ProductToOrder"
+import { Ingredient } from "../Models/Ingredient"
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/orders", async (req: express.Request, res: express.Response) => {
-	const orders = await Order.find({ relations: ["products", "products.ingredients"], order: { id: "DESC" } })
+	const orders = await Order.find({
+		relations: ["productToOrders", "productToOrders.product", "productToOrders.product.ingredients", "terminal"],
+		order: { id: "DESC" }
+	})
 	res.json({ status: 200, data: orders })
 	return
 })
@@ -29,7 +34,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		return
 	}
 
-	const { totalAmount, terminal, user, products }: Order = req.body
+	const { totalAmount, terminal, user, productToOrders }: Order = req.body
 
 	try {
 		const order = new Order()
@@ -46,30 +51,31 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			}
 		})
 
-		const orderUser = await User.findOne({
-			where: {
-				id: user
-			}
-		})
-
 		order.totalAmount = totalAmount
 		order.state = orderState
 		order.terminal = orderTerminal
 		if (user) {
+			const orderUser = await User.findOne({
+				where: {
+					id: user
+				}
+			})
 			order.user = orderUser
 		}
-		for (let i = 0; i < products.length; i++) {
-			const product = products[i]
-			if (product.custom) {
-				product.id = null
+		for (let i = 0; i < productToOrders.length; i++) {
+			const productToOrder = productToOrders[i]
+			if (productToOrder.product.custom) {
+				productToOrder.product.id = null
 			}
-			product.ingredients &&
-				product.ingredients.forEach((ingredient) => {
+			console.log(productToOrder.product.ingredients)
+			productToOrder.product.ingredients &&
+				productToOrder.product.ingredients.forEach((ingredient) => {
 					ingredient.quantity -= 1
+					Ingredient.save(ingredient)
 				})
-			product.has = [order]
-			await Product.save(product)
+			await Product.save(productToOrder.product)
 		}
+		order.productToOrders = productToOrders
 		const result = await Order.save(order)
 		res.json({ status: 200, data: result })
 		return

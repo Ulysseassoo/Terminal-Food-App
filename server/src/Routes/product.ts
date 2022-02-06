@@ -10,8 +10,8 @@ const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/products", isAdmin, async (req: express.Request, res: express.Response) => {
-	const products = await Product.find({ relations: ["ingredients"] })
+router.get("/products", async (req: express.Request, res: express.Response) => {
+	const products = await Product.find({ relations: ["ingredients", "category"] })
 	res.json({ status: 200, data: products })
 	return
 })
