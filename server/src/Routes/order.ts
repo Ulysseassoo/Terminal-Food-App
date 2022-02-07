@@ -14,7 +14,7 @@ const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/orders", async (req: express.Request, res: express.Response) => {
+router.get("/orders", isNotUser, async (req: express.Request, res: express.Response) => {
 	const orders = await Order.find({
 		relations: ["productToOrders", "productToOrders.product", "productToOrders.product.ingredients", "terminal"],
 		order: { id: "DESC" }
@@ -34,11 +34,11 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		return
 	}
 
-	const { totalAmount, terminal, user, productToOrders }: Order = req.body
+	const { terminal, user, productToOrders }: Order = req.body
 
 	try {
 		const order = new Order()
-
+		let totalAmount = 0
 		const orderState = await State.findOne({
 			where: {
 				id: 1
@@ -51,7 +51,6 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			}
 		})
 
-		order.totalAmount = totalAmount
 		order.state = orderState
 		order.terminal = orderTerminal
 		if (user) {
@@ -67,17 +66,30 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			if (productToOrder.product.custom) {
 				productToOrder.product.id = null
 			}
-			console.log(productToOrder.product.ingredients)
 			productToOrder.product.ingredients &&
 				productToOrder.product.ingredients.forEach((ingredient) => {
-					ingredient.quantity -= 1
+					if (ingredient.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
+					ingredient.quantity = ingredient.quantity - 1 * productToOrder.quantity
 					Ingredient.save(ingredient)
+					console.log(ingredient)
+					if (ingredient.quantity === 0) {
+						req.io.emit("unavailableProduct", {
+							message: "This product is not available anymore",
+							data: { ...productToOrder.product, available: false }
+						})
+						// await Product.save(productToOrder.order)
+					}
 				})
+			totalAmount += productToOrder.product.price * productToOrder.quantity
 			await Product.save(productToOrder.product)
 		}
+		order.totalAmount = totalAmount
 		order.productToOrders = productToOrders
 		const result = await Order.save(order)
-		res.json({ status: 200, data: result })
+		res.status(201).json({ status: 201, data: result })
+		req.io.emit("newOrder", {
+			data: order
+		})
 		return
 	} catch (error) {
 		res.json({ status: 400, data: error })

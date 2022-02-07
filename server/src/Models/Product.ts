@@ -22,8 +22,11 @@ export class Product extends BaseEntity {
 	@Column({ type: "int" })
 	price: number
 
-	@Column()
+	@Column({ default: false })
 	custom: boolean
+
+	@Column({ default: true })
+	available: boolean
 
 	@ManyToOne(() => Category, (category) => category.products)
 	category: Category

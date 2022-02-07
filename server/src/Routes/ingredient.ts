@@ -8,7 +8,7 @@ const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/ingredients", isAdmin, async (req: express.Request, res: express.Response) => {
+router.get("/ingredients", async (req: express.Request, res: express.Response) => {
 	const ingredients = await Ingredient.find()
 	res.json({ status: 200, data: ingredients })
 	return

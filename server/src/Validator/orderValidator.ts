@@ -1,2 +1,2 @@
 import { body } from "express-validator"
-export const orderValidator = [body("totalAmount").isNumeric()]
+export const orderValidator = [body("terminal").isString()]

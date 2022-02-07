@@ -17,6 +17,9 @@ import process from "process"
 // Declaire Global User Variable
 declare global {
 	namespace Express {
+		interface Request {
+			io: Server
+		}
 		interface User {
 			id: number
 			email: string
@@ -35,7 +38,12 @@ const app = express()
 const port = 3500
 const server = http.createServer(app)
 import { Server } from "socket.io"
-const io = new Server(server)
+const io = new Server(server, {
+	cors: {
+		origin: "*",
+		methods: ["GET", "POST"]
+	}
+})
 const secret = process.env.JWT_SECRET
 
 app.use(express.json())
@@ -45,9 +53,15 @@ app.use(cors())
 // Secure each route with a token
 app.use(
 	jwtExpress({ secret: secret, algorithms: ["HS256"] }).unless({
-		path: ["/api/auth", "/api/kitchen", "/api/admin", "/api/orders", "/api/products"]
+		path: ["/api/auth", "/api/kitchen", "/api/admin", "/api/orders", "/api/products", "/api/ingredients"]
 	})
 )
+
+app.use(async (req, res, next) => {
+	req.io = io
+
+	next()
+})
 
 app.use((err: any, req: express.Request, res: express.Response, next: NextFunction) => {
 	if (err.name === "UnauthorizedError") {
