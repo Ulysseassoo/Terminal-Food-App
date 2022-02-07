@@ -1,8 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { Dispatch, SetStateAction, useContext } from "react"
+import { useNavigate } from "react-router"
+import { toast } from "react-toastify"
 import styled from "styled-components"
 import { Close } from "styled-icons/material"
 import { CartContext } from "../../Context/CartProvider"
+import { sendOrder } from "../../Services/APIs"
 import ProductCard from "./ProductCard"
 
 interface Props {
@@ -25,7 +28,21 @@ const variants = {
 }
 
 const Cart = ({ setShowCart }: Props) => {
-	const { cart, getTotalPrice } = useContext(CartContext)
+	const { cart, getTotalPrice, checkout } = useContext(CartContext)
+	const navigate = useNavigate()
+
+	const cartCheckout = async () => {
+		try {
+			if (cart.length <= 0) throw Error("You can't order with no product selected.")
+			const { status } = await sendOrder({ terminal: "a1a23c2d-a0c8-4e58-a86d-4011b01ff63c", productToOrders: cart })
+			if (status === 201) {
+				checkout()
+				navigate("/checkout")
+			}
+		} catch (error: any) {
+			toast.error(error || error.message)
+		}
+	}
 	return (
 		<Container initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Row>
@@ -41,7 +58,7 @@ const Cart = ({ setShowCart }: Props) => {
 				<Row>
 					<Text>Total</Text> <Price>{getTotalPrice()} $</Price>
 				</Row>
-				<Button>Checkout</Button>
+				<Button onClick={() => cartCheckout()}>Checkout</Button>
 			</Column>
 		</Container>
 	)

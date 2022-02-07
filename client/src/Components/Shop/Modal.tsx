@@ -27,6 +27,9 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 		: products.find((product) => product.id === numberId)
 	const [customProduct, setCustomProduct] = useState<Product>(selectedProduct!)
 
+	useEffect(() => {
+		setCustomProduct(selectedProduct!)
+	}, [productsLoading])
 	const variants = {
 		hidden: {
 			y: "-100%",
@@ -114,7 +117,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 		<Container column initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Close onClick={() => navigate("/menu")} />
 			<Left>
-				<Title>{customProduct.name}</Title>
+				<Title>{customProduct?.name}</Title>
 				<Line />
 				<Wrapper>
 					<ImageContainer>
@@ -123,11 +126,11 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 					<Content>
 						<Column>
 							<Subtitle>Description</Subtitle>
-							{customProduct.description}
+							{customProduct?.description}
 						</Column>
 						<Column>
 							<Subtitle>Ingredients</Subtitle>
-							{customProduct.ingredients.map((ingredient) => (
+							{customProduct?.ingredients.map((ingredient) => (
 								<IngredientsContainer key={ingredient.id}>
 									{/* <PlusCircle /> */}
 									<MinusCircle onClick={() => removeIngredientFromProduct(ingredient.id)} />
@@ -137,7 +140,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 						</Column>
 						<Row>
 							<Subtitle>Price</Subtitle>
-							<Total>{customProduct.price} $</Total>
+							<Total>{customProduct?.price} $</Total>
 						</Row>
 						<Row>
 							{" "}

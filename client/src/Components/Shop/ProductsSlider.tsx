@@ -27,7 +27,9 @@ const ProductsSlider = () => {
 		<Container>
 			<MotionSlider drag="x" ref={slider} dragConstraints={{ right: 0, left: -width }}>
 				{products.map((product) => {
-					return <ProductCard {...product} key={product.id} />
+					if (!product.custom) {
+						return <ProductCard {...product} key={product.id} />
+					}
 				})}
 			</MotionSlider>
 		</Container>

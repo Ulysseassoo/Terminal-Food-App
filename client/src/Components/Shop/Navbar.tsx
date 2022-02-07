@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import { Pizza } from "@styled-icons/ionicons-solid/Pizza"
 import { ShoppingCart } from "@styled-icons/feather/ShoppingCart"

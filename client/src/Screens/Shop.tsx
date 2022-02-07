@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styled, { useTheme } from "styled-components"
 import Navbar from "../Components/Shop/Navbar"
 import Selector from "../Components/Shop/Selector"
@@ -22,6 +22,7 @@ const Shop = () => {
 			}
 		}
 	}
+
 	return (
 		<Container column background={theme.colors.background}>
 			{params.id && <Modal />}

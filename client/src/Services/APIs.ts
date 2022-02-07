@@ -5,6 +5,17 @@ interface loginData {
 	password: string
 }
 
+interface Cart {
+	product: Product
+	quantity: number
+}
+
+interface Order {
+	productToOrders: Cart[]
+	user?: number
+	terminal: string
+}
+
 const url = "http://localhost:3500/api"
 
 export const kitchenLogin = async (postData: loginData) => {
@@ -18,16 +29,25 @@ export const adminLogin = async (postData: loginData) => {
 }
 
 export const userLogin = async (postData: loginData) => {
-	const reponse = await axios.post(`${url}/auth`, postData)
-	return reponse
+	const response = await axios.post(`${url}/auth`, postData)
+	return response
 }
 
 export const getProducts = async () => {
-	const reponse = await axios.get(`${url}/products`)
-	return reponse.data
+	const response = await axios.get(`${url}/products`)
+	return response.data
 }
 
 export const getCategories = async () => {
-	const reponse = await axios.get(`${url}/categories`)
-	return reponse.data
+	const response = await axios.get(`${url}/categories`)
+	return response.data
+}
+
+export const sendOrder = async (order: Order) => {
+	const response = await axios.post(`${url}/orders`, order, {
+		headers: {
+			"Content-type": "application/json"
+		}
+	})
+	return response
 }

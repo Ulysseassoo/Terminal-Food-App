@@ -27,6 +27,7 @@ interface Props {
 
 interface CartProps {
 	$cart?: boolean
+	$available?: boolean
 }
 
 const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available }: Props) => {
@@ -37,8 +38,14 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 
 	const addProduct = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		event.stopPropagation()
+		if (!available) return toast.warning("This Product is no more available !")
 		addProductToCart({ id, calories, category, name, price, description, custom, ingredients, available })
 		toast.success("Product added to cart !")
+	}
+
+	const showItem = () => {
+		if (!available) return toast.warning("This Product is no more available !")
+		navigate(`${category.name}/${id}`)
 	}
 
 	if ($cart) {
@@ -75,7 +82,8 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 		<Container
 			whileHover={{ y: -5, boxShadow: `${theme.colors.primaryShadow} 0px 2px 8px` }}
 			transition={{ duration: 0.3, ease: "easeOut" }}
-			onClick={() => navigate(`${category.name}/${id}`)}>
+			onClick={() => showItem()}
+			$available={available}>
 			<ImageContainer>
 				<img src={ProductImage} alt="Pizza Product" />
 			</ImageContainer>
@@ -122,6 +130,11 @@ const Container = styled(motion.div)<CartProps>`
 				color: ${({ theme }) => theme.colors.error};
 				cursor: pointer;
 			}
+		`}
+	${({ $available }) =>
+		$available === false &&
+		css`
+			filter: blur(4.19px) brightness(0.79) contrast(0.98) grayscale(1) invert(0.12);
 		`}
 `
 

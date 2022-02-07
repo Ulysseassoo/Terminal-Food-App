@@ -13,6 +13,7 @@ type CartContextType = {
 	deleteProductFromCart: (id: number) => void
 	reduceItemQuantity: (id: number) => void
 	getTotalPrice: () => number
+	checkout: () => void
 }
 
 const initialState = {
@@ -22,6 +23,7 @@ const initialState = {
 	deleteProductFromCart: () => {},
 	reduceItemQuantity: () => {},
 	updateCartProduct: () => {},
+	checkout: () => {},
 	getTotalPrice: () => 0
 }
 
@@ -82,8 +84,13 @@ export const CartProvider: React.FC = ({ children }) => {
 		return 0
 	}
 
+	const checkout = () => {
+		setCart(initialState.cart)
+	}
+
 	return (
-		<CartContext.Provider value={{ cart, setCart, addProductToCart, deleteProductFromCart, getTotalPrice, reduceItemQuantity, updateCartProduct }}>
+		<CartContext.Provider
+			value={{ cart, setCart, addProductToCart, deleteProductFromCart, getTotalPrice, reduceItemQuantity, updateCartProduct, checkout }}>
 			{children}
 		</CartContext.Provider>
 	)

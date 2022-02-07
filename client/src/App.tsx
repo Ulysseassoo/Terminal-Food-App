@@ -9,9 +9,9 @@ import Accounts from "./Screens/Accounts"
 import Auth from "./Screens/Auth"
 import "react-toastify/dist/ReactToastify.css"
 import Shop from "./Screens/Shop"
-import Modal from "./Components/Shop/Modal"
 import { ProductsProvider } from "./Context/ProductsProvider"
 import { CartProvider } from "./Context/CartProvider"
+import OrderSuccess from "./Screens/OrderSuccess"
 
 const App = (): JSX.Element => {
 	const location = useLocation()
@@ -30,6 +30,7 @@ const App = (): JSX.Element => {
 							<Route path="/kitchen" element={<Auth />} />
 							<Route path="/admin" element={<Auth admin />} />
 							<Route path="/menu" element={<Shop />} />
+							<Route path="/checkout" element={<OrderSuccess />} />
 							<Route path="/menu/:product/:id" element={<Shop />} />
 						</Routes>
 					</AnimatePresence>
