@@ -5,11 +5,6 @@ interface loginData {
 	password: string
 }
 
-interface Cart {
-	product: Product
-	quantity: number
-}
-
 interface Order {
 	productToOrders: Cart[]
 	user?: number
@@ -40,6 +35,25 @@ export const getProducts = async () => {
 
 export const getCategories = async () => {
 	const response = await axios.get(`${url}/categories`)
+	return response.data
+}
+
+export const getOrders = async (token: string) => {
+	const response = await axios.get(`${url}/orders`, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const updateOrder = async (token: string, data: Order) => {
+	const response = await axios.put(`${url}/orders`, data, {
+		headers: {
+			Authorization: token,
+			"Content-type": "application/json"
+		}
+	})
 	return response.data
 }
 

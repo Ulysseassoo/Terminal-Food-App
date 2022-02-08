@@ -1,14 +1,18 @@
 import { motion } from "framer-motion"
-import React from "react"
+import React, { useContext } from "react"
 import { useForm } from "react-hook-form"
-import { useLocation } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled from "styled-components"
+import { UserContext } from "../../Context/UserProvider"
 import { adminLogin, kitchenLogin, userLogin } from "../../Services/APIs"
 import SubmitButton from "../SubmitButton"
 
 const Form = () => {
 	const { pathname } = useLocation()
+	const { setUser, user } = useContext(UserContext)
+	const navigate = useNavigate()
+	console.log(user)
 	interface DataForm {
 		email: string
 		password: string
@@ -32,7 +36,9 @@ const Form = () => {
 			const { data }: { data: responseData } =
 				pathname === "/admin" ? await adminLogin(formData) : pathname === "/user" ? await userLogin(formData) : await kitchenLogin(formData)
 			localStorage.setItem("token", data.token)
+			setUser(data.data)
 			toast.success("You are now connected !")
+			pathname === "/admin" ? navigate("/admin/dashboard") : pathname === "/user" ? navigate("/menu") : navigate("/kitchen/homepage")
 		} catch (error: any) {
 			toast.error(error.response.data.data)
 		}

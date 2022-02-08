@@ -1,10 +1,5 @@
 import { createContext, useEffect, useState } from "react"
 
-interface Cart {
-	product: Product
-	quantity: number
-}
-
 type CartContextType = {
 	cart: Cart[]
 	setCart: React.Dispatch<React.SetStateAction<Cart[]>>

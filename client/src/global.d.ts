@@ -59,4 +59,33 @@ declare global {
 		available: boolean
 		category: Category
 	}
+
+	interface User {
+		email: string
+		role: string
+	}
+
+	interface Cart {
+		product: Product
+		quantity: number
+	}
+
+	interface Terminal {
+		id: number
+		unique_id: string
+	}
+
+	interface State {
+		id: number
+		name: string
+	}
+
+	interface Order {
+		id: number
+		createdAt: string
+		totalAmount: number
+		productToOrders: Cart[]
+		terminal: Terminal
+		state: State
+	}
 }

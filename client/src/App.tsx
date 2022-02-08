@@ -1,20 +1,37 @@
+import { useEffect } from "react"
 import { Route, Routes, useLocation } from "react-router-dom"
-import Homepage from "./Screens/Homepage"
-import { GlobalStyles } from "./globalStyles"
-import { globalTheme } from "./Theme/globalTheme"
 import { ThemeProvider } from "styled-components"
 import { AnimatePresence } from "framer-motion"
 import { ToastContainer } from "react-toastify"
-import Accounts from "./Screens/Accounts"
-import Auth from "./Screens/Auth"
+import socketIOClient from "socket.io-client"
 import "react-toastify/dist/ReactToastify.css"
-import Shop from "./Screens/Shop"
 import { ProductsProvider } from "./Context/ProductsProvider"
 import { CartProvider } from "./Context/CartProvider"
 import OrderSuccess from "./Screens/OrderSuccess"
+import Homepage from "./Screens/Homepage"
+import Accounts from "./Screens/Accounts"
+import Auth from "./Screens/Auth"
+import Shop from "./Screens/Shop"
+import { GlobalStyles } from "./globalStyles"
+import { globalTheme } from "./Theme/globalTheme"
+import PrivateRoute from "./Components/PrivateRoute"
+import KitchenHomepage from "./Components/Kitchen/KitchenHomepage"
+import AdminHomepage from "./Components/Admin/AdminHomepage"
+import { UserProvider } from "./Context/UserProvider"
+import { OrdersProvider } from "./Context/OrdersProvider"
 
 const App = (): JSX.Element => {
 	const location = useLocation()
+	const ENDPOINT = "localhost:3500"
+
+	useEffect(() => {
+		const socket = socketIOClient(ENDPOINT)
+		console.log(socket)
+		socket.on("unavailableProduct", (data) => {
+			console.log(data)
+		})
+		return () => socket.disconnect()
+	}, [])
 
 	return (
 		<ThemeProvider theme={globalTheme}>
@@ -22,18 +39,38 @@ const App = (): JSX.Element => {
 			<GlobalStyles />
 			<ProductsProvider>
 				<CartProvider>
-					<AnimatePresence exitBeforeEnter initial={false}>
-						<Routes location={location} key={location.pathname}>
-							<Route path="/" element={<Homepage />} />
-							<Route path="/accounts" element={<Accounts />} />
-							<Route path="/user" element={<Auth user />} />
-							<Route path="/kitchen" element={<Auth />} />
-							<Route path="/admin" element={<Auth admin />} />
-							<Route path="/menu" element={<Shop />} />
-							<Route path="/checkout" element={<OrderSuccess />} />
-							<Route path="/menu/:product/:id" element={<Shop />} />
-						</Routes>
-					</AnimatePresence>
+					<UserProvider>
+						<OrdersProvider>
+							<AnimatePresence exitBeforeEnter initial={false}>
+								<Routes location={location} key={location.pathname}>
+									<Route path="/" element={<Homepage />} />
+									<Route path="/accounts" element={<Accounts />} />
+									<Route path="/user" element={<Auth user />} />
+									<Route path="/kitchen" element={<Auth />} />
+									<Route path="/admin" element={<Auth admin />} />
+									<Route path="/menu" element={<Shop />} />
+									<Route path="/checkout" element={<OrderSuccess />} />
+									<Route path="/menu/:product/:id" element={<Shop />} />
+									<Route
+										path="/kitchen/homepage"
+										element={
+											<PrivateRoute $kitchen>
+												<KitchenHomepage />
+											</PrivateRoute>
+										}
+									/>
+									<Route
+										path="/admin/dashboard"
+										element={
+											<PrivateRoute>
+												<AdminHomepage />
+											</PrivateRoute>
+										}
+									/>
+								</Routes>
+							</AnimatePresence>
+						</OrdersProvider>
+					</UserProvider>
 				</CartProvider>
 			</ProductsProvider>
 		</ThemeProvider>
