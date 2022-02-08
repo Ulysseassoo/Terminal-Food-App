@@ -1,7 +1,8 @@
 import React from "react"
+import { Main } from "../../globalStyles"
 
 const AdminHomepage = () => {
-	return <div>AdminHomepage</div>
+	return <Main column>AdminHomepage</Main>
 }
 
 export default AdminHomepage

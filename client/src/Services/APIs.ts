@@ -5,7 +5,7 @@ interface loginData {
 	password: string
 }
 
-interface Order {
+interface OrderToSend {
 	productToOrders: Cart[]
 	user?: number
 	terminal: string
@@ -48,7 +48,7 @@ export const getOrders = async (token: string) => {
 }
 
 export const updateOrder = async (token: string, data: Order) => {
-	const response = await axios.put(`${url}/orders`, data, {
+	const response = await axios.put(`${url}/orders/${data.id}`, data, {
 		headers: {
 			Authorization: token,
 			"Content-type": "application/json"
@@ -57,7 +57,7 @@ export const updateOrder = async (token: string, data: Order) => {
 	return response.data
 }
 
-export const sendOrder = async (order: Order) => {
+export const sendOrder = async (order: OrderToSend) => {
 	const response = await axios.post(`${url}/orders`, order, {
 		headers: {
 			"Content-type": "application/json"

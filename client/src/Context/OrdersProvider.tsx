@@ -6,14 +6,18 @@ type OrdersContextType = {
 	ordersLoading: boolean
 	orders: Order[]
 	getAllOrders: (token: string) => void
+	updateOrders: (order: Order) => void
 	setOrders: React.Dispatch<React.SetStateAction<Order[]>>
+	addNewOrder: (order: Order) => void
 }
 
 const initialState = {
 	ordersLoading: true,
 	orders: [],
 	getAllOrders: (token: string) => [],
-	setOrders: () => {}
+	setOrders: () => {},
+	updateOrders: (order: Order) => {},
+	addNewOrder: (order: Order) => {}
 }
 
 export const OrdersContext = createContext<OrdersContextType>(initialState)
@@ -32,6 +36,24 @@ export const OrdersProvider: React.FC = ({ children }) => {
 			console.log(error)
 		}
 	}
+
+	const updateOrders = (order: Order) => {
+		const newOrders = [
+			...orders.map((item) => {
+				if (item.id === order.id) {
+					return { ...item, ...order }
+				}
+				return item
+			})
+		]
+		setOrders(newOrders)
+	}
+
+	const addNewOrder = (order: Order) => {
+		const newOrders = [...orders, order]
+		setOrders(newOrders)
+	}
+
 	useEffect(() => {
 		if (user.role !== "user" && user.role !== "") {
 			const token = localStorage.getItem("token")
@@ -39,5 +61,7 @@ export const OrdersProvider: React.FC = ({ children }) => {
 		}
 	}, [user])
 
-	return <OrdersContext.Provider value={{ orders, getAllOrders, setOrders, ordersLoading }}>{children}</OrdersContext.Provider>
+	return (
+		<OrdersContext.Provider value={{ orders, getAllOrders, setOrders, ordersLoading, updateOrders, addNewOrder }}>{children}</OrdersContext.Provider>
+	)
 }

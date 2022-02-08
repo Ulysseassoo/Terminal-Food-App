@@ -3,7 +3,6 @@ import { Route, Routes, useLocation } from "react-router-dom"
 import { ThemeProvider } from "styled-components"
 import { AnimatePresence } from "framer-motion"
 import { ToastContainer } from "react-toastify"
-import socketIOClient from "socket.io-client"
 import "react-toastify/dist/ReactToastify.css"
 import { ProductsProvider } from "./Context/ProductsProvider"
 import { CartProvider } from "./Context/CartProvider"
@@ -21,18 +20,6 @@ import { UserProvider } from "./Context/UserProvider"
 import { OrdersProvider } from "./Context/OrdersProvider"
 
 const App = (): JSX.Element => {
-	const location = useLocation()
-	const ENDPOINT = "localhost:3500"
-
-	useEffect(() => {
-		const socket = socketIOClient(ENDPOINT)
-		console.log(socket)
-		socket.on("unavailableProduct", (data) => {
-			console.log(data)
-		})
-		return () => socket.disconnect()
-	}, [])
-
 	return (
 		<ThemeProvider theme={globalTheme}>
 			<ToastContainer />

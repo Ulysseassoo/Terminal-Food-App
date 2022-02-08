@@ -4,14 +4,21 @@ import { getProducts } from "../Services/APIs"
 type ProductsContextType = {
 	productsLoading: boolean
 	products: Product[]
-	getAllProducts: () => {}
-	setProducts: React.Dispatch<React.SetStateAction<never[]>>
+	getAllProducts: () => void
+	setProducts: React.Dispatch<React.SetStateAction<Product[]>>
 }
 
-export const ProductsContext = createContext<ProductsContextType | null>(null)
+const initialState = {
+	products: [],
+	productsLoading: true,
+	getAllProducts: () => {},
+	setProducts: () => {}
+}
+
+export const ProductsContext = createContext<ProductsContextType>(initialState)
 
 export const ProductsProvider: React.FC = ({ children }) => {
-	const [products, setProducts] = useState([])
+	const [products, setProducts] = useState<Product[]>([])
 	const [productsLoading, setProductsLoading] = useState(true)
 
 	const getAllProducts = async () => {
@@ -23,6 +30,17 @@ export const ProductsProvider: React.FC = ({ children }) => {
 			console.log(error)
 		}
 	}
+
+	const addNewProduct = (product: Product) => {
+		const newOrders = [...products, product]
+		setProducts(newOrders)
+	}
+
+	const deleteProduct = (id: number) => {
+		const newOrders = products.filter((product) => product.id !== id)
+		setProducts(newOrders)
+	}
+
 	useEffect(() => {
 		getAllProducts()
 	}, [])
