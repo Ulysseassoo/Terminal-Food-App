@@ -44,6 +44,8 @@ const Container = styled(motion.div)`
 	width: 100%;
 	padding: 1rem;
 	padding-bottom: 3rem;
+	overflow-x: scroll;
+	scrollbar-width: thin;
 `
 
 const MotionSlider = styled(motion.div)<SliderProps>`

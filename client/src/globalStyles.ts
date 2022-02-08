@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from "styled-components"
 type MainStyle = {
 	column?: boolean
 	background?: string
+	gap?: string
 }
 
 export const GlobalStyles = createGlobalStyle`
@@ -78,4 +79,5 @@ export const Main = styled(motion.main)<MainStyle>`
 	flex-direction: ${({ column }) => (column ? "column" : "row")};
 	background-color: ${({ background }) => background};
 	position: relative;
+	gap: ${({ gap }) => (gap ? gap : "initial")};
 `

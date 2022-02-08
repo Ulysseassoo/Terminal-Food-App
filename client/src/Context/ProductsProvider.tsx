@@ -31,14 +31,26 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		}
 	}
 
-	const addNewProduct = (product: Product) => {
-		const newOrders = [...products, product]
-		setProducts(newOrders)
+	const addNewProduct = (payload: Product) => {
+		const newProducts = [...products, payload]
+		setProducts(newProducts)
 	}
 
 	const deleteProduct = (id: number) => {
-		const newOrders = products.filter((product) => product.id !== id)
-		setProducts(newOrders)
+		const newProducts = products.filter((product) => product.id !== id)
+		setProducts(newProducts)
+	}
+
+	const updateProduct = (payload: Product) => {
+		const newProducts = [
+			...products.map((item) => {
+				if (item.id === payload.id) {
+					return { ...item, ...payload }
+				}
+				return item
+			})
+		]
+		setProducts(newProducts)
 	}
 
 	useEffect(() => {
