@@ -12,7 +12,6 @@ const Form = () => {
 	const { pathname } = useLocation()
 	const { setUser, user } = useContext(UserContext)
 	const navigate = useNavigate()
-	console.log(user)
 	interface DataForm {
 		email: string
 		password: string

@@ -44,6 +44,9 @@ const OrderCard = ({ id, createdAt, totalAmount, state, productToOrders, termina
 		<Container variants={variants} exit="hidden" animate="show" initial="hidden">
 			<CardTop>#{id}</CardTop>
 			<CardBody>
+				<Text>
+					Status : <Tag>{state.name}</Tag>
+				</Text>
 				<Text>Total Amount : {totalAmount} $</Text>
 				<Timer date={createdAt} />
 				<Buttons>
@@ -63,7 +66,6 @@ const Container = styled(motion.div)`
 	border-radius: 0.25rem;
 	background-color: ${({ theme }) => theme.colors.background};
 	box-shadow: ${({ theme }) => theme.shadow.text};
-	cursor: pointer;
 	min-width: 250px;
 	gap: 0.5rem;
 `
@@ -101,6 +103,17 @@ const CardBody = styled(motion.div)`
 const Text = styled(motion.p)`
 	font-family: ${({ theme }) => theme.fonts.normal};
 	font-size: ${({ theme }) => theme.size.s};
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+`
+
+const Tag = styled(motion.div)`
+	padding: 0.25rem;
+	background-color: ${({ theme }) => theme.colors.error};
+	width: fit-content;
+	border-radius: 0.25rem;
 `
 
 export default OrderCard

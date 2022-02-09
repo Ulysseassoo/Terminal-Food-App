@@ -5,6 +5,7 @@ import socketClient from "socket.io-client"
 import OrderCard from "./OrderCard"
 import styled from "styled-components"
 import { AnimatePresence, motion } from "framer-motion"
+import Details from "./Details"
 
 const KitchenHomepage = () => {
 	const { ordersLoading, orders, updateOrders, addNewOrder } = useContext(OrdersContext)
@@ -50,14 +51,14 @@ const KitchenHomepage = () => {
 						})}
 					</AnimatePresence>
 				</Top>
-				<Bottom>
+				<AnimatePresence exitBeforeEnter>
 					{selectedId !== 0 &&
 						orders.map((order) => {
 							if (order.id === selectedId) {
-								return <p key={order.id}>{order.totalAmount}</p>
+								return <Details {...order} setSelectedId={setSelectedId} key={order.id} />
 							}
 						})}
-				</Bottom>
+				</AnimatePresence>
 			</Container>
 		</Main>
 	)
@@ -95,14 +96,6 @@ const Top = styled(motion.div)`
 	scrollbar-width: thin;
 	align-items: center;
 	gap: 2rem;
-`
-
-const Bottom = styled(motion.div)`
-	width: 100%;
-	height: calc(100% - 250px);
-	border: 1px solid ${({ theme }) => theme.colors.backgroundShadow};
-	padding: 0.5rem;
-	border-radius: 0.25rem;
 `
 
 export default KitchenHomepage

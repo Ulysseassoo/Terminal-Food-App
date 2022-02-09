@@ -63,6 +63,7 @@ export const OrdersProvider: React.FC = ({ children }) => {
 		if (user.role !== "user" && user.role !== "") {
 			const token = localStorage.getItem("token")
 			getAllOrders(token!)
+			return
 		}
 	}, [user])
 
