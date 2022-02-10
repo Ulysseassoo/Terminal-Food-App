@@ -2,8 +2,8 @@ export const globalTheme = {
 	colors: {
 		primary: "#2EC4B6",
 		secondary: "#FF9F1C",
-		lightPrimary: "#FFBF69",
-		lightSecondary: "#DEFEEF",
+		lightPrimary: "#2EC4B66B",
+		lightSecondary: "#FFBF69",
 		hoverPrimary: "#2EC4B6",
 		text: "#2c2c2c",
 		error: "#FF5D5D",

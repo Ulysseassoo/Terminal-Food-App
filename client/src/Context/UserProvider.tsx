@@ -6,6 +6,7 @@ type UserContextType = {
 	userLoading: boolean
 	user: User
 	setUser: React.Dispatch<React.SetStateAction<User>>
+	sessionEnd: () => void
 }
 
 const initialState = {
@@ -14,7 +15,8 @@ const initialState = {
 		email: "",
 		role: ""
 	},
-	setUser: () => {}
+	setUser: () => {},
+	sessionEnd: () => {}
 }
 
 export const UserContext = createContext<UserContextType>(initialState)
@@ -24,10 +26,16 @@ export const UserProvider: React.FC = ({ children }) => {
 	const [userLoading, setUserLoading] = useState(false)
 	const navigate = useNavigate()
 
-	useEffect(() => {
-		const token = localStorage.getItem("token")
-		console.log(user)
-	}, [])
+	// useEffect(() => {
+	// 	const token = localStorage.getItem("token")
+	// 	console.log(user)
+	// }, [])
 
-	return <UserContext.Provider value={{ setUser, user, userLoading }}>{children}</UserContext.Provider>
+	const sessionEnd = () => {
+		setUser(initialState.user)
+		setUserLoading(false)
+		return
+	}
+
+	return <UserContext.Provider value={{ setUser, user, userLoading, sessionEnd }}>{children}</UserContext.Provider>
 }

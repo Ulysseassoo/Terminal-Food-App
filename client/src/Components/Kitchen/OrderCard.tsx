@@ -100,7 +100,7 @@ const CardBody = styled(motion.div)`
 	padding: 1rem;
 `
 
-const Text = styled(motion.p)`
+const Text = styled(motion.div)`
 	font-family: ${({ theme }) => theme.fonts.normal};
 	font-size: ${({ theme }) => theme.size.s};
 	display: inline-flex;
@@ -109,7 +109,7 @@ const Text = styled(motion.p)`
 	width: 100%;
 `
 
-const Tag = styled(motion.div)`
+const Tag = styled(motion.p)`
 	padding: 0.25rem;
 	background-color: ${({ theme }) => theme.colors.error};
 	width: fit-content;

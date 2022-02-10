@@ -1,4 +1,6 @@
+import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
+import styled from "styled-components"
 import calculateTimeLeft from "../../Helpers/useTimer"
 
 interface Props {
@@ -23,13 +25,18 @@ const Timer = ({ date }: Props) => {
 		}
 
 		timerComponents.push(
-			<span key={date + index}>
+			<Span key={date + index}>
 				{timeLeft[interval]} {interval}{" "}
-			</span>
+			</Span>
 		)
 	})
 
 	return <div>{timerComponents}</div>
 }
+
+const Span = styled(motion.span)`
+	font-family: ${({ theme }) => theme.fonts.normal};
+	font-weight: 600;
+`
 
 export default Timer

@@ -41,7 +41,7 @@ const App = (): JSX.Element => {
 							}
 						/>
 						<Route
-							path="/admin/dashboard"
+							path="/admin/*"
 							element={
 								<PrivateRoute>
 									<AdminHomepage />
