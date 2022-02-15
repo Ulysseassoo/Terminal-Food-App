@@ -82,6 +82,7 @@ declare global {
 	}
 
 	interface Order {
+		[key: string]: any
 		id: number
 		createdAt: string
 		totalAmount: number
