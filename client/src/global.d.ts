@@ -27,6 +27,7 @@ declare module "styled-components" {
 			m: string
 			l: string
 			xl: string
+			"2l": string
 			xxl: string
 		}
 		shadow: {

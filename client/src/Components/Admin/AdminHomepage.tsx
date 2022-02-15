@@ -7,6 +7,7 @@ import { Outlet, Route, Routes } from "react-router-dom"
 import Dashboard from "./Dashboard"
 import Ingredients from "./Ingredients"
 import Products from "./Products"
+import { AnimatePresence } from "framer-motion"
 
 const AdminHomepage = () => {
 	const variants = {
@@ -21,14 +22,16 @@ const AdminHomepage = () => {
 	}
 
 	return (
-		<Container initial="hidden" animate="show" exit="hidden" variants={variants} gap="3rem">
+		<Container initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Sidebar />
 			<Outlet />
-			<Routes>
-				<Route path="dashboard" element={<Dashboard />} />
-				<Route path="products" element={<Products />} />
-				<Route path="ingredients" element={<Ingredients />} />
-			</Routes>
+			<AnimatePresence exitBeforeEnter initial={false}>
+				<Routes location={location} key={location.pathname}>
+					<Route path="dashboard" element={<Dashboard />} />
+					<Route path="products" element={<Products />} />
+					<Route path="ingredients" element={<Ingredients />} />
+				</Routes>
+			</AnimatePresence>
 		</Container>
 	)
 }

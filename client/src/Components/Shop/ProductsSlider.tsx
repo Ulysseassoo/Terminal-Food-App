@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 
 import ProductCard from "./ProductCard"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { ProductsContext } from "../../Context/ProductsProvider"
 
 interface SliderProps {
@@ -12,7 +12,7 @@ interface SliderProps {
 const ProductsSlider = () => {
 	const [width, setWidth] = useState(0)
 	const slider = useRef<HTMLDivElement>()
-	const { products, productsLoading } = useContext(ProductsContext)!
+	const { products, productsLoading, category } = useContext(ProductsContext)!
 	useEffect(() => {
 		if (null !== slider.current) {
 			setWidth(slider.current?.scrollWidth! - slider.current?.offsetWidth!)
@@ -23,12 +23,30 @@ const ProductsSlider = () => {
 		return <></>
 	}
 
+	const variants = {
+		hidden: { opacity: 0 },
+		show: {
+			opacity: 1,
+			transition: {
+				duration: 0.3,
+				staggerChildren: 0.3
+			}
+		}
+	}
+
 	return (
 		<Container>
-			<MotionSlider drag="x" ref={slider} dragConstraints={{ right: 0, left: -width }}>
-				{products.map((product) => {
-					if (!product.custom) {
-						return <ProductCard {...product} key={product.id} />
+			<MotionSlider
+				drag="x"
+				ref={slider}
+				dragConstraints={{ right: 0, left: -width }}
+				variants={variants}
+				initial="hidden"
+				animate="show"
+				exit="hidden">
+				{products.map((product, i) => {
+					if (!product.custom && product.category.name === category) {
+						return <ProductCard {...product} key={product.id} i={i} />
 					}
 				})}
 			</MotionSlider>

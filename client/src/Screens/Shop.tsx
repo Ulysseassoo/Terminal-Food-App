@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import styled, { useTheme } from "styled-components"
 import Navbar from "../Components/Shop/Navbar"
 import Selector from "../Components/Shop/Selector"
@@ -7,31 +7,36 @@ import { Main } from "../globalStyles"
 import Image from "../assets/Tracé 6.png"
 import { useParams } from "react-router"
 import Modal from "../Components/Shop/Modal"
-import { AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
+import { ProductsContext } from "../Context/ProductsProvider"
 
 const Shop = () => {
 	const theme = useTheme()
 	const params = useParams()
+	const { category } = useContext(ProductsContext)
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
 			opacity: 1,
 			transition: {
-				duration: 0.5,
-				staggerChildren: 0.5
+				duration: 0.2
 			}
 		}
 	}
 
 	return (
 		<Container column background={theme.colors.background}>
-			{params.id && <Modal />}
+			<AnimatePresence>{params.id && <Modal />}</AnimatePresence>
 			<Navbar />
 			<Flex>
 				<Selector />
 				<Left>
 					<Wrapper>
-						<Title>Pizzas</Title>
+						<AnimatePresence exitBeforeEnter>
+							<Title key={category} initial="hidden" animate="show" exit="hidden" variants={variants}>
+								{category}s
+							</Title>
+						</AnimatePresence>
 						<img src={Image} alt="Line under title" />
 					</Wrapper>
 					<ProductsSlider />
@@ -64,7 +69,7 @@ const Wrapper = styled.div`
 	align-self: start;
 `
 
-const Title = styled.h1`
+const Title = styled(motion.h1)`
 	font-family: ${({ theme }) => theme.fonts.title};
 	font-size: ${({ theme }) => theme.size.xl};
 	color: ${({ theme }) => theme.colors.text};

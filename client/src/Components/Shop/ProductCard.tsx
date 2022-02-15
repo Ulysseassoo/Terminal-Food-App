@@ -23,6 +23,7 @@ interface Props {
 	available: boolean
 	ingredients: Ingredient[]
 	quantity?: number
+	i: number
 }
 
 interface CartProps {
@@ -30,7 +31,17 @@ interface CartProps {
 	$available?: boolean
 }
 
-const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available }: Props) => {
+const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available, i }: Props) => {
+	const variants = {
+		hidden: { opacity: 0, x: 10 * i },
+		show: {
+			opacity: 1,
+			x: 0,
+			transition: {
+				duration: 0.2
+			}
+		}
+	}
 	const theme = useTheme()
 	const navigate = useNavigate()
 	const [editMode, setEditMode] = useState(false)
@@ -51,7 +62,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 	if ($cart) {
 		return (
 			<AnimatePresence>
-				<Container $cart>
+				<Container $cart variants={variants}>
 					<Trash onClick={() => deleteProductFromCart(id)} />
 					<ImageContainer $cart>
 						<img src={ProductImage} alt="Pizza Product" />

@@ -6,7 +6,7 @@ export const globalTheme = {
 		lightSecondary: "#FFBF69",
 		hoverPrimary: "#2EC4B6",
 		text: "#2c2c2c",
-		error: "#FF5D5D",
+		error: "#CE2727",
 		background: "#F5F5F5",
 		white: "#FFF",
 		primaryShadow: "#36E9D8",
@@ -23,6 +23,7 @@ export const globalTheme = {
 		s: "1rem",
 		m: "1.2rem",
 		l: "2rem",
+		"2l": "3.5rem",
 		xl: "4.6rem",
 		xxl: "6.8rem"
 	},

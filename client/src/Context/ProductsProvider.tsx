@@ -6,25 +6,31 @@ type ProductsContextType = {
 	products: Product[]
 	getAllProducts: () => void
 	setProducts: React.Dispatch<React.SetStateAction<Product[]>>
+	category: string
+	setCategory: React.Dispatch<React.SetStateAction<string>>
 }
 
 const initialState = {
 	products: [],
 	productsLoading: true,
 	getAllProducts: () => {},
-	setProducts: () => {}
+	setProducts: () => {},
+	category: "",
+	setCategory: () => {}
 }
 
 export const ProductsContext = createContext<ProductsContextType>(initialState)
 
 export const ProductsProvider: React.FC = ({ children }) => {
 	const [products, setProducts] = useState<Product[]>([])
+	const [category, setCategory] = useState("")
 	const [productsLoading, setProductsLoading] = useState(true)
 
 	const getAllProducts = async () => {
 		try {
 			let { data } = await getProducts()
 			setProducts(data)
+			setCategory("Pizza")
 			setProductsLoading(false)
 		} catch (error) {
 			console.log(error)
@@ -57,5 +63,9 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		getAllProducts()
 	}, [])
 
-	return <ProductsContext.Provider value={{ products, getAllProducts, setProducts, productsLoading }}>{children}</ProductsContext.Provider>
+	return (
+		<ProductsContext.Provider value={{ products, getAllProducts, setProducts, productsLoading, category, setCategory }}>
+			{children}
+		</ProductsContext.Provider>
+	)
 }

@@ -1,15 +1,18 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import styled from "styled-components"
 import { ArrowIosUpwardOutline } from "@styled-icons/evaicons-outline/ArrowIosUpwardOutline"
 import { ArrowIosDownwardOutline } from "styled-icons/evaicons-outline"
 import { DrinkToGo, FoodPizza } from "styled-icons/fluentui-system-filled"
 import { getProducts } from "../../Services/APIs"
+import { ProductsContext } from "../../Context/ProductsProvider"
 
 interface CardProps {
 	$active?: boolean
 }
 
 const Selector = () => {
+	const { setCategory } = useContext(ProductsContext)
+
 	return (
 		<Container>
 			<Wrapper>
@@ -17,11 +20,11 @@ const Selector = () => {
 					<ArrowIosUpwardOutline />
 				</IconContainer>
 				<Icons>
-					<Card $active>
+					<Card $active onClick={() => setCategory("Pizza")}>
 						<FoodPizza />
 						<p>Pizzas</p>
 					</Card>
-					<Card>
+					<Card onClick={() => setCategory("Drink")}>
 						<DrinkToGo />
 						<p>Drinks</p>
 					</Card>
