@@ -111,38 +111,6 @@ const Row = styled(motion.div)`
 const Full = styled(motion.div)`
 	width: 100%;
 	height: 100%;
-	& table {
-		width: 100%;
-		padding: 1rem;
-		box-shadow: ${({ theme }) => theme.shadow.box};
-		border-radius: 0.5rem;
-		height: 100%;
-		& th {
-			padding: 0.5rem;
-			font-family: ${({ theme }) => theme.fonts.sub};
-			font-size: ${({ theme }) => theme.size.s};
-			text-transform: capitalize;
-			font-weight: bold;
-			color: ${({ theme }) => theme.colors.text};
-		}
-		& tr {
-			padding: 0.5rem;
-			font-family: ${({ theme }) => theme.fonts.sub};
-			font-size: ${({ theme }) => theme.size.s};
-			text-transform: capitalize;
-			font-weight: initial;
-			text-align: center;
-			color: ${({ theme }) => theme.colors.text};
-			opacity: 0.75;
-			border-bottom: 1px solid ${({ theme }) => theme.colors.backgroundShadow};
-			& td:last-child {
-				padding: 0.25rem;
-				border-radius: 0.5rem;
-				/* background-color: ${({ theme }) => theme.colors.success}; */
-				/* color: ${({ theme }) => theme.colors.white}; */
-			}
-		}
-	}
 `
 
 export default Content
