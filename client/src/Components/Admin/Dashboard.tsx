@@ -10,6 +10,7 @@ import Table from "./Table"
 
 interface ColumnProps {
 	width: string
+	padding?: string
 }
 
 const Content = () => {
@@ -55,7 +56,12 @@ const Content = () => {
 						<Table />
 					</Full>
 				</Column>
-				<Column width="30%">ee</Column>
+				<Column width="30%" padding="0.5rem 1rem">
+					<Box>
+						<Subtitle>Stock</Subtitle>
+						<Informations></Informations>
+					</Box>
+				</Column>
 			</Wrapper>
 		</Container>
 	)
@@ -100,6 +106,7 @@ const Column = styled(motion.div)<ColumnProps>`
 	width: ${({ width }) => width};
 	height: 100%;
 	gap: 1.5rem;
+	padding: ${({ padding }) => (padding ? padding : "")};
 `
 
 const Row = styled(motion.div)`
@@ -111,6 +118,18 @@ const Row = styled(motion.div)`
 const Full = styled(motion.div)`
 	width: 100%;
 	height: 100%;
+`
+
+const Box = styled(motion.div)`
+	width: 100%;
+	height: calc(100% - 55px);
+`
+
+const Informations = styled(motion.div)`
+	box-shadow: ${({ theme }) => theme.shadow.box};
+	height: 100%;
+	width: 100%;
+	border-radius: 0.5rem;
 `
 
 export default Content

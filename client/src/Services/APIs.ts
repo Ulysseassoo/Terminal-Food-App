@@ -47,6 +47,15 @@ export const getOrders = async (token: string) => {
 	return response.data
 }
 
+export const getIngredients = async (token: string) => {
+	const response = await axios.get(`${url}/ingredients`, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
 export const updateOrder = async (token: string, data: Order) => {
 	const response = await axios.put(`${url}/orders/${data.id}`, data, {
 		headers: {

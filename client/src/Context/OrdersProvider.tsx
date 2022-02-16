@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { getOrders, getProducts } from "../Services/APIs"
+import { getOrders } from "../Services/APIs"
 import { UserContext } from "./UserProvider"
 
 type OrdersContextType = {
