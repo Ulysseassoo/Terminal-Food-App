@@ -26,13 +26,13 @@ const Content = () => {
 	}
 	const { orders } = useContext(OrdersContext)
 
-	const completedOrders = (orders: Order[]) => {
+	const completedOrders = () => {
 		if (orders.length === 0 || orders === undefined || orders === null) return 0
 		const numberOrders = orders.filter((order) => order.state.id === 2)
 		return numberOrders.length
 	}
 
-	const ordersSales = (orders: Order[]) => {
+	const ordersSales = () => {
 		if (orders.length > 0 && orders !== undefined && orders !== null) {
 			const totalAmount = orders.map((item) => item.totalAmount)
 			const reducer = (previousValue: number, currentValue: number) => previousValue + currentValue
@@ -47,8 +47,8 @@ const Content = () => {
 			<Wrapper>
 				<Column width="70%">
 					<Row>
-						<AdminCard title="Completed Orders" data={completedOrders(orders)} Icon={BarChartFill} />
-						<AdminCard title="Total Sales" data={ordersSales(orders)} $price Icon={Chart} />
+						<AdminCard title="Completed Orders" data={completedOrders()} Icon={BarChartFill} />
+						<AdminCard title="Total Sales" data={ordersSales()} $price Icon={Chart} />
 					</Row>
 					<Full>
 						<Subtitle>Recent Orders</Subtitle>

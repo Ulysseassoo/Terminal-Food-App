@@ -1,4 +1,6 @@
-import React from "react"
+import React, { useContext, useEffect } from "react"
+import { OrdersContext } from "../../Context/OrdersProvider"
+import socketClient from "socket.io-client"
 import styled from "styled-components"
 import { Main } from "../../globalStyles"
 import Content from "./Dashboard"
@@ -10,6 +12,9 @@ import Products from "./Products"
 import { AnimatePresence } from "framer-motion"
 
 const AdminHomepage = () => {
+	const { orders, updateOrders, addNewOrder } = useContext(OrdersContext)
+	const ENDPOINT = "localhost:3500"
+
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -20,6 +25,19 @@ const AdminHomepage = () => {
 			}
 		}
 	}
+
+	useEffect(() => {
+		const socket = socketClient(ENDPOINT)
+		socket.on("modifiedOrder", (data) => {
+			updateOrders(data.data)
+		})
+		socket.on("newOrder", (order) => {
+			addNewOrder(order.data)
+		})
+		return () => {
+			socket.disconnect()
+		}
+	}, [orders])
 
 	return (
 		<Container initial="hidden" animate="show" exit="hidden" variants={variants}>

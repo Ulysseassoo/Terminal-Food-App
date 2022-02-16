@@ -50,7 +50,7 @@ export const OrdersProvider: React.FC = ({ children }) => {
 	}
 
 	const addNewOrder = (order: Order) => {
-		const newOrders = [...orders, order]
+		const newOrders = [order, ...orders]
 		setOrders(newOrders)
 	}
 
