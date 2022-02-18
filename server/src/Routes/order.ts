@@ -9,14 +9,15 @@ import { Product } from "../Models/Product"
 import { isAdmin, isKitchen, isNotUser } from "../Helpers/verify"
 import { ProductToOrder } from "../Models/ProductToOrder"
 import { Ingredient } from "../Models/Ingredient"
+import { Stock } from "../Models/Stock"
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-router.get("/orders", isNotUser, async (req: express.Request, res: express.Response) => {
+router.get("/orders", async (req: express.Request, res: express.Response) => {
 	const orders = await Order.find({
-		relations: ["productToOrders", "productToOrders.product", "productToOrders.product.ingredients", "terminal"],
+		relations: ["productToOrders", "productToOrders.product", "productToOrders.product.ingredients", "terminal", "state"],
 		order: { id: "DESC" }
 	})
 	res.json({ status: 200, data: orders })
@@ -34,7 +35,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		return
 	}
 
-	const { terminal, user, productToOrders }: Order = req.body
+	const { terminal, productToOrders }: Order = req.body
 
 	try {
 		const order = new Order()
@@ -53,35 +54,38 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 
 		order.state = orderState
 		order.terminal = orderTerminal
-		if (user) {
+		if (req.user) {
 			const orderUser = await User.findOne({
 				where: {
-					id: user
+					id: req.user.id
 				}
 			})
 			order.user = orderUser
 		}
 		for (let i = 0; i < productToOrders.length; i++) {
 			const productToOrder = productToOrders[i]
-			if (productToOrder.product.custom) {
-				productToOrder.product.id = null
-			}
-			productToOrder.product.ingredients &&
-				productToOrder.product.ingredients.forEach((ingredient) => {
-					if (ingredient.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
-					ingredient.quantity = ingredient.quantity - 1 * productToOrder.quantity
-					Ingredient.save(ingredient)
-					console.log(ingredient)
-					if (ingredient.quantity === 0) {
-						req.io.emit("unavailableProduct", {
-							message: "This product is not available anymore",
-							data: { ...productToOrder.product, available: false }
-						})
-						// await Product.save(productToOrder.order)
+			for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
+				const ingredient = productToOrder.product.ingredients[x]
+				let oldStock = await Stock.findOne({
+					where: {
+						ingredient: ingredient.id
 					}
 				})
+				if (oldStock.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
+				oldStock.quantity -= productToOrder.quantity
+				await Stock.save(oldStock)
+				if (oldStock.quantity === 0) {
+					req.io.emit("unavailableProduct", {
+						message: "This product is not available anymore",
+						data: { ...productToOrder.product, available: false }
+					})
+				}
+			}
 			totalAmount += productToOrder.product.price * productToOrder.quantity
-			await Product.save(productToOrder.product)
+			if (productToOrder.product.custom) {
+				productToOrder.product.id = null
+				await Product.save(productToOrder.product)
+			}
 		}
 		order.totalAmount = totalAmount
 		order.productToOrders = productToOrders
@@ -92,7 +96,8 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		})
 		return
 	} catch (error) {
-		res.json({ status: 400, data: error })
+		console.log(error)
+		res.json({ status: 400, data: error.message })
 		return
 	}
 })
@@ -115,35 +120,26 @@ router.get("/orders/:id", async (req: express.Request, res: express.Response) =>
 	}
 })
 
-router.put("/orders/:id", orderValidator, isKitchen, async (req: express.Request, res: express.Response) => {
+router.put("/orders/:id", isKitchen, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
-	const errors = validationResult(req)
-
-	if (!errors.isEmpty()) {
-		res.status(401).send({
-			status: 401,
-			message: errors
-		})
-		return
-	}
-	const { totalAmount, terminal, user, state }: Order = req.body
+	const { totalAmount, terminal, state }: Order = req.body
 
 	const orderTerminal = await Terminal.findOne({
 		where: {
-			unique_id: terminal
+			unique_id: terminal.unique_id
 		}
 	})
 
 	const orderUser = await User.findOne({
 		where: {
-			id: user
+			id: req.user.id
 		}
 	})
 
 	const orderState = await State.findOne({
 		where: {
-			id: state
+			id: state.id
 		}
 	})
 
@@ -159,7 +155,10 @@ router.put("/orders/:id", orderValidator, isKitchen, async (req: express.Request
 		order.user = orderUser
 		order.state = orderState
 		const result = await Order.save(order)
-		res.json({ status: 200, data: result })
+		req.io.emit("modifiedOrder", {
+			data: order
+		})
+		res.status(200).json({ status: 200, data: result })
 		return
 	} catch (error) {
 		res.status(400).send({ status: 400, data: error })

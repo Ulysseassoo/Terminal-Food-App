@@ -9,7 +9,7 @@ const router = express.Router()
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/ingredients", async (req: express.Request, res: express.Response) => {
-	const ingredients = await Ingredient.find()
+	const ingredients = await Ingredient.find({ relations: ["stock"] })
 	res.json({ status: 200, data: ingredients })
 	return
 })
@@ -25,12 +25,12 @@ router.post("/ingredients", ingredientValidator, isAdmin, async (req: express.Re
 		return
 	}
 
-	const { quantity, name, important }: Ingredient = req.body
+	const { quantity, name, important } = req.body
 
 	try {
 		const ingredient = new Ingredient()
 
-		ingredient.quantity = quantity
+		// ingredient.quantity = quantity
 		ingredient.name = name
 		ingredient.important = important
 		const result = await Ingredient.save(ingredient)
@@ -71,7 +71,7 @@ router.put("/ingredients/:id", ingredientValidator, isAdmin, async (req: express
 		})
 		return
 	}
-	const { quantity, name, important }: Ingredient = req.body
+	const { quantity, name, important } = req.body
 
 	try {
 		const ingredient = await Ingredient.findOne({
@@ -81,7 +81,7 @@ router.put("/ingredients/:id", ingredientValidator, isAdmin, async (req: express
 		})
 		if (!ingredient) throw Error("The ingredient was not found")
 
-		ingredient.quantity = quantity
+		// ingredient.quantity = quantity
 		ingredient.name = name
 		ingredient.important = important
 		const result = await Ingredient.save(ingredient)

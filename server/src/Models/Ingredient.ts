@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, Generated, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, Generated, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { Category } from "./Category"
 import { Product } from "./Product"
+import { Stock } from "./Stock"
 
 @Entity()
 export class Ingredient extends BaseEntity {
@@ -10,11 +11,11 @@ export class Ingredient extends BaseEntity {
 	@Column({ type: "varchar", length: 255 })
 	name: string
 
-	@Column({ type: "int" })
-	quantity: number
-
 	@Column()
 	important: boolean
+
+	@OneToOne(() => Stock, (stock) => stock.ingredient)
+	stock: Stock
 
 	@ManyToMany(() => Product, (product) => product.ingredients)
 	@JoinTable()

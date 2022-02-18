@@ -38,6 +38,7 @@ const app = express()
 const port = 3500
 const server = http.createServer(app)
 import { Server } from "socket.io"
+import { User } from "./Models/User"
 const io = new Server(server, {
 	cors: {
 		origin: "*",
@@ -53,19 +54,34 @@ app.use(cors())
 // Secure each route with a token
 app.use(
 	jwtExpress({ secret: secret, algorithms: ["HS256"] }).unless({
-		path: ["/api/auth", "/api/kitchen", "/api/admin", "/api/orders", "/api/products", "/api/ingredients"]
+		path: [
+			"/api/auth",
+			"/api/kitchen",
+			"/api/admin",
+			"/api/orders",
+			{
+				url: "/",
+				method: ["POST"]
+			},
+			"/api/products",
+			"/api/ingredients"
+		]
 	})
 )
 
 app.use(async (req, res, next) => {
 	req.io = io
-
-	next()
+	if (req.user) {
+		req.user = await User.findOne({ where: { id: req.user.id } })
+		return next()
+	}
+	return next()
 })
 
 app.use((err: any, req: express.Request, res: express.Response, next: NextFunction) => {
+	console.log(err)
 	if (err.name === "UnauthorizedError") {
-		res.status(401).json({ status: 401, data: "invalid token..." })
+		return res.status(401).json({ status: 401, data: err.inner.message })
 	}
 })
 
