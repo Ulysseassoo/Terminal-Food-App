@@ -69,11 +69,13 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 				let oldStock = await Stock.findOne({
 					where: {
 						ingredient: ingredient.id
-					}
+					},
+					relations: ["ingredient"]
 				})
 				if (oldStock.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
 				oldStock.quantity -= productToOrder.quantity
-				await Stock.save(oldStock)
+				const newStock = await Stock.save(oldStock)
+				req.io.emit("changedStock", { data: newStock })
 				if (oldStock.quantity === 0) {
 					req.io.emit("unavailableProduct", {
 						message: "This product is not available anymore",
