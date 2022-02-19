@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import styled, { useTheme } from "styled-components"
 import { PlusCircleDotted } from "styled-icons/bootstrap"
 import { ProductsContext } from "../../Context/ProductsProvider"
@@ -8,9 +8,23 @@ import { BarChartFill } from "@styled-icons/bootstrap"
 import { Chart } from "@styled-icons/boxicons-solid"
 import AdminCard from "./AdminCard"
 import Table from "./Table"
+import { OrdersContext } from "../../Context/OrdersProvider"
+import AdminForm from "./AdminForm"
+
+interface ProductOccurences {
+	productName: string
+	occurences: number
+}
+
+interface ProductIncome {
+	productName: string
+	revenue: number
+}
 
 const Products = () => {
-	const { products } = useContext(ProductsContext)
+	const { products, productsLoading } = useContext(ProductsContext)
+	const [showForm, setShowForm] = useState(false)
+	const { orders } = useContext(OrdersContext)
 	const theme = useTheme()
 	const variants = {
 		hidden: { opacity: 0 },
@@ -23,37 +37,71 @@ const Products = () => {
 		}
 	}
 
-	const completedOrders = () => {
-		if (products.length === 0 || products === undefined || products === null) return 0
-		const numberOrders = products.filter((order) => order.state.id === 2)
-		return numberOrders.length
+	const getHighestRevenueProduct = (): ProductIncome => {
+		const initialState = { productName: "", revenue: 0 }
+		if (productsLoading) return initialState
+		const result = products.map((product) => {
+			let income = 0
+			orders.map((order) => {
+				order.productToOrders.map((cart) => {
+					if (product.id === cart.product.id) {
+						income += product.price
+					}
+				})
+			})
+			return { productName: product.name, revenue: income }
+		})
+		const reducer = (previousValue: ProductIncome, currentValue: ProductIncome) => {
+			if (previousValue.revenue > currentValue.revenue) return previousValue
+			return currentValue
+		}
+		return result.reduce(reducer)
 	}
 
-	const ordersSales = () => {
-		if (products.length > 0 && products !== undefined && products !== null) {
-			const totalAmount = products.map((item) => item.totalAmount)
-			const reducer = (previousValue: number, currentValue: number) => previousValue + currentValue
-			return totalAmount.reduce(reducer)
+	const mostSoldProduct = (): ProductOccurences => {
+		const initialState = { productName: "", occurences: 0 }
+		if (productsLoading) return initialState
+		const result = products.map((product) => {
+			let counter = 0
+			orders.map((order) => {
+				order.productToOrders.map((cart) => {
+					if (product.id === cart.product.id) {
+						counter++
+					}
+				})
+			})
+			return { productName: product.name, occurences: counter }
+		})
+		const reducer = (previousValue: ProductOccurences, currentValue: ProductOccurences) => {
+			if (previousValue.occurences > currentValue.occurences) return previousValue
+			return currentValue
 		}
-		return 0
+		return result.reduce(reducer)
 	}
 
 	return (
 		<Container column gap="2rem" initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Top>
 				<Title>Products</Title>{" "}
-				<Button whileHover={{ backgroundColor: theme.colors.primary }}>
+				<Button whileHover={{ backgroundColor: theme.colors.primary }} onClick={() => setShowForm(true)}>
 					{" "}
 					<PlusCircleDotted /> Add Product
 				</Button>
 			</Top>
 			<Bottom>
 				<Row>
-					<AdminCard title="Most Sold Product" data={0} Icon={BarChartFill} />
-					<AdminCard title="Highest Revenue Product" data={0} $price Icon={Chart} />
+					<AdminCard title="Most Sold Product" data={mostSoldProduct().occurences} Icon={BarChartFill} productName={mostSoldProduct().productName} />
+					<AdminCard
+						title="Highest Revenue Product"
+						data={getHighestRevenueProduct().revenue}
+						$price
+						Icon={Chart}
+						productName={getHighestRevenueProduct().productName}
+					/>
 				</Row>
 				<Table contextData={products} $product />
 			</Bottom>
+			{showForm && <AdminForm />}
 		</Container>
 	)
 }
@@ -64,6 +112,7 @@ const Container = styled(Main)`
 	align-items: initial;
 	justify-content: initial;
 	padding-left: 1rem;
+	position: relative;
 `
 
 const Button = styled(motion.button)`

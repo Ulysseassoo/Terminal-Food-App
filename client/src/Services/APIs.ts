@@ -42,12 +42,12 @@ export const deleteProduct = async (id: number, token: string) => {
 	return response.data
 }
 
-export const getCategories = async (): Promise<Category[]> => {
+export const getCategories = async () => {
 	const response = await axios.get(`${url}/categories`)
 	return response.data
 }
 
-export const getOrders = async (token: string): Promise<Order[]> => {
+export const getOrders = async (token: string) => {
 	const response = await axios.get(`${url}/orders`, {
 		headers: {
 			Authorization: token
@@ -56,7 +56,7 @@ export const getOrders = async (token: string): Promise<Order[]> => {
 	return response.data
 }
 
-export const getIngredients = async (token: string): Promise<Ingredient[]> => {
+export const getIngredients = async (token: string) => {
 	const response = await axios.get(`${url}/ingredients`, {
 		headers: {
 			Authorization: token

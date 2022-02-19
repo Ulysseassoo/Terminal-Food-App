@@ -23,7 +23,7 @@ export const globalTheme = {
 		s: "1rem",
 		m: "1.2rem",
 		l: "2rem",
-		"2l": "3.5rem",
+		"2l": "3rem",
 		xl: "4.6rem",
 		xxl: "6.8rem"
 	},

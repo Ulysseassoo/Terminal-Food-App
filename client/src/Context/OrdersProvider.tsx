@@ -54,11 +54,6 @@ export const OrdersProvider: React.FC = ({ children }) => {
 		setOrders(newOrders)
 	}
 
-	// const mostSoldProduct = () : Product => {
-	// 	const product =
-	// 	return
-	// }
-
 	useEffect(() => {
 		if (user.role !== "user" && user.role !== "") {
 			const token = localStorage.getItem("token")

@@ -10,9 +10,10 @@ interface Props {
 	graph?: string
 	$price?: boolean
 	Icon: StyledIcon
+	productName?: string
 }
 
-const AdminCard = ({ title, data, graph, $price, Icon }: Props) => {
+const AdminCard = ({ title, data, graph, $price, Icon, productName }: Props) => {
 	return (
 		<Container>
 			<Icon />
@@ -21,6 +22,7 @@ const AdminCard = ({ title, data, graph, $price, Icon }: Props) => {
 				<Counter from={0} to={data} />
 				{$price ? " $" : ""}
 			</Data>
+			{productName && <Sub>{productName}</Sub>}
 		</Container>
 	)
 }
@@ -55,6 +57,11 @@ const Data = styled(motion.span)`
 	font-size: ${({ theme }) => theme.size["2l"]};
 	color: ${({ theme }) => theme.colors.text};
 	font-weight: bold;
+`
+
+const Sub = styled(motion.p)`
+	font-size: 0.95rem;
+	font-style: italic;
 `
 
 export default AdminCard
