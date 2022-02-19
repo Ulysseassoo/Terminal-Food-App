@@ -33,12 +33,21 @@ export const getProducts = async () => {
 	return response.data
 }
 
-export const getCategories = async () => {
+export const deleteProduct = async (id: number, token: string) => {
+	const response = await axios.delete(`${url}/products/${id}`, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const getCategories = async (): Promise<Category[]> => {
 	const response = await axios.get(`${url}/categories`)
 	return response.data
 }
 
-export const getOrders = async (token: string) => {
+export const getOrders = async (token: string): Promise<Order[]> => {
 	const response = await axios.get(`${url}/orders`, {
 		headers: {
 			Authorization: token
@@ -47,7 +56,7 @@ export const getOrders = async (token: string) => {
 	return response.data
 }
 
-export const getIngredients = async (token: string) => {
+export const getIngredients = async (token: string): Promise<Ingredient[]> => {
 	const response = await axios.get(`${url}/ingredients`, {
 		headers: {
 			Authorization: token
@@ -56,7 +65,16 @@ export const getIngredients = async (token: string) => {
 	return response.data
 }
 
-export const updateOrder = async (token: string, data: Order) => {
+export const deleteIngredient = async (id: number, token: string) => {
+	const response = await axios.delete(`${url}/ingredients/${id}`, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const updateOrder = async (token: string, data: Order): Promise<Order> => {
 	const response = await axios.put(`${url}/orders/${data.id}`, data, {
 		headers: {
 			Authorization: token,

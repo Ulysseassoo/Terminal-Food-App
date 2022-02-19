@@ -10,9 +10,11 @@ import Dashboard from "./Dashboard"
 import Ingredients from "./Ingredients"
 import Products from "./Products"
 import { AnimatePresence } from "framer-motion"
+import { IngredientsContext } from "../../Context/IngredientsProvider"
 
 const AdminHomepage = () => {
 	const { orders, updateOrders, addNewOrder } = useContext(OrdersContext)
+	const { refreshQuantity } = useContext(IngredientsContext)
 	const ENDPOINT = "localhost:3500"
 
 	const variants = {
@@ -33,6 +35,9 @@ const AdminHomepage = () => {
 		})
 		socket.on("newOrder", (order) => {
 			addNewOrder(order.data)
+		})
+		socket.on("changedStock", (stock) => {
+			refreshQuantity(stock.data)
 		})
 		return () => {
 			socket.disconnect()
@@ -57,6 +62,7 @@ const AdminHomepage = () => {
 const Container = styled(Main)`
 	justify-content: initial;
 	align-items: initial;
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 export default AdminHomepage

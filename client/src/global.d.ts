@@ -42,14 +42,23 @@ declare global {
 		id: number
 		name: string
 	}
+
+	interface Stock {
+		id: number
+		quantity: number
+		ingredient?: Ingredient
+	}
+
 	interface Ingredient {
+		[key: string]: any
 		id: number
 		name: string
-		quantity: number
 		important: boolean
+		stock?: Stock
 	}
 
 	interface Product {
+		[key: string]: any
 		id: number
 		name: string
 		description: string

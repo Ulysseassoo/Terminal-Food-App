@@ -7,6 +7,8 @@ import AdminCard from "./AdminCard"
 import { BarChartFill } from "@styled-icons/bootstrap"
 import { Chart } from "@styled-icons/boxicons-solid"
 import Table from "./Table"
+import Stock from "./Stock"
+import { Link } from "react-router-dom"
 
 interface ColumnProps {
 	width: string
@@ -43,7 +45,7 @@ const Content = () => {
 	}
 
 	return (
-		<Container column gap="2rem" initial="hidden" animate="show" exit="hidden" variants={variants} background={theme.colors.background}>
+		<Container column gap="2rem" initial="hidden" animate="show" exit="hidden" variants={variants}>
 			<Title>Dashboard</Title>
 			<Wrapper>
 				<Column width="70%">
@@ -53,13 +55,14 @@ const Content = () => {
 					</Row>
 					<Full>
 						<Subtitle>Recent Orders</Subtitle>
-						<Table />
+						<Table contextData={orders} $order />
+						<CustomLink to="/admin/orders">See all the products</CustomLink>
 					</Full>
 				</Column>
-				<Column width="30%" padding="0.5rem 1rem">
+				<Column width="30%" padding="0.5rem 1rem 1.5rem 1rem">
 					<Box>
 						<Subtitle>Stock</Subtitle>
-						<Informations></Informations>
+						<Stock />
 					</Box>
 				</Column>
 			</Wrapper>
@@ -118,6 +121,9 @@ const Row = styled(motion.div)`
 const Full = styled(motion.div)`
 	width: 100%;
 	height: 100%;
+	padding-bottom: 1rem;
+	flex-direction: column;
+	display: flex;
 `
 
 const Box = styled(motion.div)`
@@ -125,11 +131,16 @@ const Box = styled(motion.div)`
 	height: calc(100% - 55px);
 `
 
-const Informations = styled(motion.div)`
-	box-shadow: ${({ theme }) => theme.shadow.box};
-	height: 100%;
-	width: 100%;
-	border-radius: 0.5rem;
+const CustomLink = styled(Link)`
+	align-self: center;
+	text-align: center;
+	text-decoration: none;
+	color: ${({ theme }) => theme.colors.secondary};
+	font-size: ${({ theme }) => theme.size.s};
+	transition: 0.3s ease-in;
+	&:hover {
+		opacity: 0.8;
+	}
 `
 
 export default Content

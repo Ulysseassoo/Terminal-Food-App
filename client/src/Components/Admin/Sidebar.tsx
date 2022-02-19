@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { Dashboard, LogOut } from "styled-icons/boxicons-solid"
 import { Production } from "styled-icons/fluentui-system-filled"
+import { FoodMenu } from "@styled-icons/boxicons-regular"
 import { FoodBank } from "styled-icons/material"
 import { UserContext } from "../../Context/UserProvider"
 
@@ -34,6 +35,12 @@ const Sidebar = () => {
 					<CustomLink to="ingredients">
 						<FoodBank />
 						<LinkName>ingredients</LinkName>
+					</CustomLink>
+				</AnimateBox>
+				<AnimateBox>
+					<CustomLink to="orders">
+						<FoodMenu />
+						<LinkName>orders</LinkName>
 					</CustomLink>
 				</AnimateBox>
 			</Links>

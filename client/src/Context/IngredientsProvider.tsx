@@ -10,6 +10,7 @@ type IngredientsContextType = {
 	setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>
 	addNewIngredient: (ingredient: Ingredient) => void
 	deleteIngredient: (id: number) => void
+	refreshQuantity: (stock: Stock) => void
 }
 
 const initialState = {
@@ -19,7 +20,8 @@ const initialState = {
 	setIngredients: () => {},
 	updateIngredient: (ingredient: Ingredient) => {},
 	addNewIngredient: (ingredient: Ingredient) => {},
-	deleteIngredient: (id: number) => {}
+	deleteIngredient: (id: number) => {},
+	refreshQuantity: (stock: Stock) => {}
 }
 
 export const IngredientsContext = createContext<IngredientsContextType>(initialState)
@@ -61,6 +63,18 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 		setIngredients(filteredIngredients)
 	}
 
+	const refreshQuantity = (stock: Stock) => {
+		const newIngredients = [
+			...ingredients.map((item) => {
+				if (item.id === stock.ingredient?.id) {
+					return { ...item, stock: stock }
+				}
+				return item
+			})
+		]
+		setIngredients(newIngredients)
+	}
+
 	useEffect(() => {
 		if (user.role === "admin") {
 			const token = localStorage.getItem("token")
@@ -71,7 +85,16 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 
 	return (
 		<IngredientsContext.Provider
-			value={{ ingredients, getAllIngredients, setIngredients, deleteIngredient, ingredientsLoading, updateIngredient, addNewIngredient }}>
+			value={{
+				ingredients,
+				getAllIngredients,
+				refreshQuantity,
+				setIngredients,
+				deleteIngredient,
+				ingredientsLoading,
+				updateIngredient,
+				addNewIngredient
+			}}>
 			{children}
 		</IngredientsContext.Provider>
 	)

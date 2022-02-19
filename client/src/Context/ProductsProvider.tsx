@@ -8,6 +8,7 @@ type ProductsContextType = {
 	setProducts: React.Dispatch<React.SetStateAction<Product[]>>
 	category: string
 	setCategory: React.Dispatch<React.SetStateAction<string>>
+	deleteProductFromContext: (id: number) => void
 }
 
 const initialState = {
@@ -16,7 +17,8 @@ const initialState = {
 	getAllProducts: () => {},
 	setProducts: () => {},
 	category: "",
-	setCategory: () => {}
+	setCategory: () => {},
+	deleteProductFromContext: (id: number) => {}
 }
 
 export const ProductsContext = createContext<ProductsContextType>(initialState)
@@ -42,7 +44,7 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		setProducts(newProducts)
 	}
 
-	const deleteProduct = (id: number) => {
+	const deleteProductFromContext = (id: number) => {
 		const newProducts = products.filter((product) => product.id !== id)
 		setProducts(newProducts)
 	}
@@ -64,7 +66,7 @@ export const ProductsProvider: React.FC = ({ children }) => {
 	}, [])
 
 	return (
-		<ProductsContext.Provider value={{ products, getAllProducts, setProducts, productsLoading, category, setCategory }}>
+		<ProductsContext.Provider value={{ products, getAllProducts, setProducts, deleteProductFromContext, productsLoading, category, setCategory }}>
 			{children}
 		</ProductsContext.Provider>
 	)
