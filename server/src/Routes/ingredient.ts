@@ -25,14 +25,14 @@ router.post("/ingredients", ingredientValidator, isAdmin, async (req: express.Re
 		return
 	}
 
-	const { quantity, name, important } = req.body
+	const { stock, name, important }: Ingredient = req.body
 
 	try {
 		const ingredient = new Ingredient()
 
-		// ingredient.quantity = quantity
 		ingredient.name = name
 		ingredient.important = important
+		ingredient.stock = stock
 		const result = await Ingredient.save(ingredient)
 		res.json({ status: 200, data: result })
 		return
@@ -45,11 +45,7 @@ router.post("/ingredients", ingredientValidator, isAdmin, async (req: express.Re
 router.get("/ingredients/:id", isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
-		const ingredient = await Ingredient.findOne({
-			where: {
-				id: id
-			}
-		})
+		const ingredient = await Ingredient.findOne(id)
 		if (!ingredient) throw Error("The ingredient was not found")
 		res.json({ status: 200, data: ingredient })
 		return
@@ -71,23 +67,21 @@ router.put("/ingredients/:id", ingredientValidator, isAdmin, async (req: express
 		})
 		return
 	}
-	const { quantity, name, important } = req.body
+	const { stock, name, important }: Ingredient = req.body
 
 	try {
-		const ingredient = await Ingredient.findOne({
-			where: {
-				id: id
-			}
-		})
+		const ingredient = await Ingredient.findOne(id, { relations: ["stock"] })
 		if (!ingredient) throw Error("The ingredient was not found")
 
-		// ingredient.quantity = quantity
 		ingredient.name = name
 		ingredient.important = important
+		ingredient.stock.quantity = stock.quantity
 		const result = await Ingredient.save(ingredient)
 		res.json({ status: 200, data: result })
 		return
 	} catch (error) {
+		console.log(error)
+
 		res.json({ status: 400, data: error })
 		return
 	}

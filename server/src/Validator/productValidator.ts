@@ -4,6 +4,8 @@ export const productValidator = [
 	body("name").isLength({ min: 3 }),
 	body("description").isString().isLength({ min: 10 }),
 	body("custom").isBoolean(),
+	body("available").isBoolean(),
 	body("calories").isLength({ min: 4 }),
-	body("category_id").isNumeric()
+	body("ingredients").isArray(),
+	body("category").isObject()
 ]

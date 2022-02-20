@@ -5,13 +5,14 @@ import { productValidator } from "../Validator/productValidator"
 import { Product } from "../Models/Product"
 import { Category } from "../Models/Category"
 import { isAdmin } from "../Helpers/verify"
+import { Ingredient } from "../Models/Ingredient"
 
 const router = express.Router()
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/products", async (req: express.Request, res: express.Response) => {
-	const products = await Product.find({ relations: ["ingredients", "category"] })
+	const products = await Product.find({ relations: ["ingredients", "category"], order: { id: "ASC" } })
 	res.json({ status: 200, data: products })
 	return
 })
@@ -32,11 +33,7 @@ router.post("/products", productValidator, isAdmin, async (req: express.Request,
 	try {
 		const product = new Product()
 
-		const productCategory = await Category.findOne({
-			where: {
-				id: category
-			}
-		})
+		const productCategory = await Category.findOne(category.id)
 
 		product.price = price
 		product.name = name
@@ -44,7 +41,13 @@ router.post("/products", productValidator, isAdmin, async (req: express.Request,
 		product.category = productCategory
 		product.custom = custom
 		product.calories = calories
-		product.ingredients = [...ingredients]
+		product.ingredients = []
+
+		for (const ingredient of ingredients) {
+			const checkIngredient = await Ingredient.findOne(ingredient.id)
+			product.ingredients = [...product.ingredients, checkIngredient]
+		}
+
 		const result = await Product.save(product)
 		res.json({ status: 200, data: result })
 		return
@@ -87,19 +90,11 @@ router.put("/products/:id", productValidator, isAdmin, async (req: express.Reque
 	const { price, name, description, custom, calories, category, ingredients }: Product = req.body
 
 	try {
-		const product = await Product.findOne({
-			where: {
-				id: id
-			}
-		})
+		const product = await Product.findOne(id)
 
 		if (!product) throw Error("Product was not found")
 
-		const productCategory = await Category.findOne({
-			where: {
-				id: category
-			}
-		})
+		const productCategory = await Category.findOne(category.id)
 
 		product.price = price
 		product.name = name
@@ -107,7 +102,13 @@ router.put("/products/:id", productValidator, isAdmin, async (req: express.Reque
 		product.category = productCategory
 		product.custom = custom
 		product.calories = calories
-		product.ingredients = [...ingredients]
+		product.ingredients = []
+
+		for (const ingredient of ingredients) {
+			const checkIngredient = await Ingredient.findOne(ingredient.id)
+			product.ingredients = [...product.ingredients, checkIngredient]
+		}
+
 		const result = await Product.save(product)
 		res.json({ status: 200, data: result })
 		return
@@ -126,7 +127,11 @@ router.delete("/products/:id", isAdmin, async (req: express.Request, res: expres
 			}
 		})
 		if (!product) throw Error("The product doesn't exist")
+		Product.delete(product)
 		res.json({ status: 200, data: "Product has been deleted" })
+		req.io.emit("deletedProduct", {
+			data: product
+		})
 		return
 	} catch (error) {
 		res.status(400).send({ status: 400, data: error })

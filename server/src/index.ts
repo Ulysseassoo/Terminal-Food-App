@@ -58,11 +58,11 @@ app.use(
 			"/api/auth",
 			"/api/kitchen",
 			"/api/admin",
-			"/api/orders",
 			{
 				url: "/",
 				method: ["POST"]
 			},
+			"/api/orders",
 			"/api/products",
 			"/api/ingredients"
 		]

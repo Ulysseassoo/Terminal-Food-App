@@ -20,7 +20,6 @@ export const isKitchen = (req: express.Request, res: express.Response, next: exp
 }
 
 export const isNotUser = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-	console.log(req.user)
 	if (req.user?.role === "kitchen" || req.user?.role === "admin") {
 		next()
 	} else {

@@ -6,9 +6,7 @@ import { State } from "../Models/State"
 import { Terminal } from "../Models/Terminal"
 import { User } from "../Models/User"
 import { Product } from "../Models/Product"
-import { isAdmin, isKitchen, isNotUser } from "../Helpers/verify"
-import { ProductToOrder } from "../Models/ProductToOrder"
-import { Ingredient } from "../Models/Ingredient"
+import { isAdmin, isKitchen } from "../Helpers/verify"
 import { Stock } from "../Models/Stock"
 
 const router = express.Router()
