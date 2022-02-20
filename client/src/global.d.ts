@@ -44,14 +44,14 @@ declare global {
 	}
 
 	interface Stock {
-		id: number
+		id?: number
 		quantity: number
 		ingredient?: Ingredient
 	}
 
 	interface Ingredient {
 		[key: string]: any
-		id: number
+		id?: number
 		name: string
 		important: boolean
 		stock?: Stock
@@ -59,7 +59,7 @@ declare global {
 
 	interface Product {
 		[key: string]: any
-		id: number
+		id?: number
 		name: string
 		description: string
 		calories: string

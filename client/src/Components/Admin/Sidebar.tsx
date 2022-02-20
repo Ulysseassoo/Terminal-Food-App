@@ -59,6 +59,7 @@ const Container = styled(motion.aside)`
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+	z-index: 40;
 `
 
 const Title = styled(motion.p)`

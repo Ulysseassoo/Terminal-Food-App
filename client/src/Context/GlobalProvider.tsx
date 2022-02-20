@@ -4,6 +4,7 @@ import { OrdersProvider } from "./OrdersProvider"
 import { ProductsProvider } from "./ProductsProvider"
 import { CartProvider } from "./CartProvider"
 import { IngredientsProvider } from "./IngredientsProvider"
+import { CategoriesProvider } from "./CategoryProvider"
 interface Props {
 	children: JSX.Element
 }
@@ -14,7 +15,9 @@ const GlobalProvider = ({ children }: Props) => {
 				<CartProvider>
 					<UserProvider>
 						<IngredientsProvider>
-							<OrdersProvider>{children}</OrdersProvider>
+							<CategoriesProvider>
+								<OrdersProvider>{children}</OrdersProvider>
+							</CategoriesProvider>
 						</IngredientsProvider>
 					</UserProvider>
 				</CartProvider>

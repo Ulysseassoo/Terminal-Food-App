@@ -33,6 +33,24 @@ export const getProducts = async () => {
 	return response.data
 }
 
+export const createProduct = async (product: Product, token: string) => {
+	const response = await axios.post(`${url}/products`, product, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const updateProduct = async (product: Product, token: string, productId: number) => {
+	const response = await axios.put(`${url}/products/${productId}`, product, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
 export const deleteProduct = async (id: number, token: string) => {
 	const response = await axios.delete(`${url}/products/${id}`, {
 		headers: {
@@ -42,8 +60,12 @@ export const deleteProduct = async (id: number, token: string) => {
 	return response.data
 }
 
-export const getCategories = async () => {
-	const response = await axios.get(`${url}/categories`)
+export const getCategories = async (token: string) => {
+	const response = await axios.get(`${url}/categories`, {
+		headers: {
+			Authorization: token
+		}
+	})
 	return response.data
 }
 
@@ -58,6 +80,24 @@ export const getOrders = async (token: string) => {
 
 export const getIngredients = async (token: string) => {
 	const response = await axios.get(`${url}/ingredients`, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const createIngredient = async (ingredient: Ingredient, token: string) => {
+	const response = await axios.post(`${url}/ingredients`, ingredient, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const updateIngredient = async (ingredient: Ingredient, token: string, ingredientId: number) => {
+	const response = await axios.put(`${url}/ingredients/${ingredientId}`, ingredient, {
 		headers: {
 			Authorization: token
 		}

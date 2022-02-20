@@ -6,7 +6,7 @@ type IngredientsContextType = {
 	ingredientsLoading: boolean
 	ingredients: Ingredient[]
 	getAllIngredients: (token: string) => void
-	updateIngredient: (ingredient: Ingredient) => void
+	updateIngredientFromContext: (ingredient: Ingredient) => void
 	setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>
 	addNewIngredient: (ingredient: Ingredient) => void
 	deleteIngredient: (id: number) => void
@@ -18,7 +18,7 @@ const initialState = {
 	ingredients: [],
 	getAllIngredients: (token: string) => [],
 	setIngredients: () => {},
-	updateIngredient: (ingredient: Ingredient) => {},
+	updateIngredientFromContext: (ingredient: Ingredient) => {},
 	addNewIngredient: (ingredient: Ingredient) => {},
 	deleteIngredient: (id: number) => {},
 	refreshQuantity: (stock: Stock) => {}
@@ -41,7 +41,7 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 		}
 	}
 
-	const updateIngredient = (ingredient: Ingredient) => {
+	const updateIngredientFromContext = (ingredient: Ingredient) => {
 		const newIngredients = [
 			...ingredients.map((item) => {
 				if (item.id === ingredient.id) {
@@ -92,7 +92,7 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 				setIngredients,
 				deleteIngredient,
 				ingredientsLoading,
-				updateIngredient,
+				updateIngredientFromContext,
 				addNewIngredient
 			}}>
 			{children}

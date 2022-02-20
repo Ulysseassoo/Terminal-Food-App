@@ -8,7 +8,13 @@ type ProductsContextType = {
 	setProducts: React.Dispatch<React.SetStateAction<Product[]>>
 	category: string
 	setCategory: React.Dispatch<React.SetStateAction<string>>
+	showForm: boolean
+	setShowForm: React.Dispatch<React.SetStateAction<boolean>>
+	selectedProduct: number
+	setSelectedProduct: React.Dispatch<React.SetStateAction<number>>
 	deleteProductFromContext: (id: number) => void
+	addNewProduct: (payload: Product) => void
+	updateProductFromContext: (payload: Product) => void
 }
 
 const initialState = {
@@ -17,15 +23,23 @@ const initialState = {
 	getAllProducts: () => {},
 	setProducts: () => {},
 	category: "",
+	showForm: false,
+	setShowForm: () => {},
+	selectedProduct: 0,
+	setSelectedProduct: () => {},
 	setCategory: () => {},
-	deleteProductFromContext: (id: number) => {}
+	deleteProductFromContext: (id: number) => {},
+	addNewProduct: (payload: Product) => {},
+	updateProductFromContext: (payload: Product) => {}
 }
 
 export const ProductsContext = createContext<ProductsContextType>(initialState)
 
 export const ProductsProvider: React.FC = ({ children }) => {
 	const [products, setProducts] = useState<Product[]>([])
+	const [showForm, setShowForm] = useState(false)
 	const [category, setCategory] = useState("")
+	const [selectedProduct, setSelectedProduct] = useState(0)
 	const [productsLoading, setProductsLoading] = useState(true)
 
 	const getAllProducts = async () => {
@@ -49,7 +63,7 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		setProducts(newProducts)
 	}
 
-	const updateProduct = (payload: Product) => {
+	const updateProductFromContext = (payload: Product) => {
 		const newProducts = [
 			...products.map((item) => {
 				if (item.id === payload.id) {
@@ -66,7 +80,22 @@ export const ProductsProvider: React.FC = ({ children }) => {
 	}, [])
 
 	return (
-		<ProductsContext.Provider value={{ products, getAllProducts, setProducts, deleteProductFromContext, productsLoading, category, setCategory }}>
+		<ProductsContext.Provider
+			value={{
+				products,
+				addNewProduct,
+				showForm,
+				setShowForm,
+				getAllProducts,
+				setProducts,
+				deleteProductFromContext,
+				productsLoading,
+				category,
+				setCategory,
+				selectedProduct,
+				setSelectedProduct,
+				updateProductFromContext
+			}}>
 			{children}
 		</ProductsContext.Provider>
 	)

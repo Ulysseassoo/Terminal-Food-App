@@ -51,7 +51,7 @@ const Cart = ({ setShowCart }: Props) => {
 			</Row>
 			<CartProducts>
 				{cart.map(({ product, quantity }) => (
-					<ProductCard {...product} quantity={quantity} $cart key={product.id} />
+					<ProductCard {...product} quantity={quantity} $cart key={product.id!} i={product.id!} />
 				))}
 			</CartProducts>
 			<Column>

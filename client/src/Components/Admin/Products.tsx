@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import React, { useContext, useState } from "react"
 import styled, { useTheme } from "styled-components"
 import { PlusCircleDotted } from "styled-icons/bootstrap"
@@ -22,8 +22,7 @@ interface ProductIncome {
 }
 
 const Products = () => {
-	const { products, productsLoading } = useContext(ProductsContext)
-	const [showForm, setShowForm] = useState(false)
+	const { products, productsLoading, showForm, setShowForm } = useContext(ProductsContext)
 	const { orders } = useContext(OrdersContext)
 	const theme = useTheme()
 	const variants = {
@@ -101,7 +100,7 @@ const Products = () => {
 				</Row>
 				<Table contextData={products} $product />
 			</Bottom>
-			{showForm && <AdminForm />}
+			<AnimatePresence>{showForm && <AdminForm />}</AnimatePresence>
 		</Container>
 	)
 }

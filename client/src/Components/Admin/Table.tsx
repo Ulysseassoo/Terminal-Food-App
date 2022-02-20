@@ -16,7 +16,7 @@ interface CellProps {
 	cellProps: any
 }
 const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
-	const { deleteProductFromContext } = useContext(ProductsContext)
+	const { deleteProductFromContext, setShowForm, setSelectedProduct } = useContext(ProductsContext)
 	const data = React.useMemo(
 		() => getFormattedData(contextData),
 
@@ -35,7 +35,11 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		const token = localStorage.getItem("token")
 		const result = $product ? await deleteProduct(id, token!) : await deleteIngredient(id, token!)
 		$product && deleteProductFromContext(id)
-		console.log(result)
+	}
+
+	const editItem = async (id: number) => {
+		setShowForm(true)
+		setSelectedProduct(id)
 	}
 
 	return (
@@ -46,6 +50,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 						<Tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => {
 								if (column.id === "delete" && $order) return <></>
+								if (column.id === "edit" && $order) return <></>
 								return <Th {...column.getHeaderProps()}>{column.render("Header")}</Th>
 							})}
 						</Tr>
@@ -66,7 +71,14 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 											</Td>
 										)
 									}
-									if (cell.column.id === "delete" && $order) {
+									if (cell.column.id === "edit" && $order === undefined) {
+										return (
+											<Td {...cell.getCellProps()} cellProps={cell.value}>
+												<EditButton onClick={() => editItem(cell.value)}>Edit</EditButton>
+											</Td>
+										)
+									}
+									if (cell.column.id === "delete" || (cell.column.id === "edit" && $order)) {
 										return <></>
 									}
 									return (
@@ -138,6 +150,19 @@ const Td = styled(motion.td)<CellProps>`
 const Button = styled(motion.button)`
 	padding: 0.2rem;
 	background-color: ${({ theme }) => theme.colors.error};
+	font-family: ${({ theme }) => theme.fonts.sub};
+	font-size: ${({ theme }) => theme.size.s};
+	color: ${({ theme }) => theme.colors.white};
+	text-transform: uppercase;
+	width: 100%;
+	cursor: pointer;
+	border: none;
+	border-radius: 0.25rem;
+`
+
+const EditButton = styled(motion.button)`
+	padding: 0.2rem;
+	background-color: ${({ theme }) => theme.colors.success};
 	font-family: ${({ theme }) => theme.fonts.sub};
 	font-size: ${({ theme }) => theme.size.s};
 	color: ${({ theme }) => theme.colors.white};
