@@ -11,6 +11,7 @@ import { User } from "../Models/User"
 import { Product } from "../Models/Product"
 import { isAdmin, isKitchen } from "../Helpers/verify"
 import { Stock } from "../Models/Stock"
+import { transporter } from "../Helpers/MailTransporter"
 
 const router = express.Router()
 
@@ -126,6 +127,15 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		req.io.emit("newOrder", {
 			data: order
 		})
+		console.log(req.user)
+		if (req.user) {
+			await transporter.sendMail({
+				from: "pizza-restaurant@official.fr",
+				to: req.user.email,
+				subject: `New Order ${result.id}`,
+				html: "Mon contenu"
+			})
+		}
 		return
 	} catch (error) {
 		console.log(error)

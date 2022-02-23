@@ -54,17 +54,16 @@ app.use(cors())
 
 // Secure each route with a token
 app.use(
-	jwtExpress({ secret: secret, algorithms: ["HS256"] }).unless({
+	jwtExpress({ secret: secret, algorithms: ["HS256"], credentialsRequired: false }).unless({
 		path: [
 			"/api/auth",
 			"/api/kitchen",
 			"/api/admin",
 			{
 				url: "/",
-				method: ["POST"]
+				method: ["GET"]
 			},
 			"/api/products",
-			"/api/orders",
 			"/api/ingredients",
 			"/api/images"
 		]
