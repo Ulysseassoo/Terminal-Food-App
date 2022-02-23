@@ -43,6 +43,12 @@ declare global {
 		name: string
 	}
 
+	interface ProductImage {
+		id?: number
+		name: string
+		product?: Product
+	}
+
 	interface Stock {
 		id?: number
 		quantity: number
@@ -68,6 +74,7 @@ declare global {
 		custom: boolean
 		available: boolean
 		category: Category
+		image?: ProductImage
 	}
 
 	interface User {

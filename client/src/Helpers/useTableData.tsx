@@ -4,11 +4,10 @@ function instanceOfOrder(array: any): array is Order {
 
 export const getColumns = (contextData: (Order | Product | Ingredient)[]) => {
 	if (contextData.length > 0) {
-		const columns = Object.keys(contextData[contextData.length - 1])
+		const columns = Object.keys(contextData[contextData.length - 2])
 		columns.find((item) => item === "productToOrders") && columns.splice(3, 1)
-		columns.find((item) => item === "available") && columns.splice(6, 3)
+		columns.find((item) => item === "available") && columns.splice(6, 4)
 		columns.find((item) => item === "stock") && columns.splice(3, 1)
-		console.log(columns)
 		const formattedColumns = columns
 			.sort((a, b) => {
 				if (a === b) {
@@ -24,6 +23,7 @@ export const getColumns = (contextData: (Order | Product | Ingredient)[]) => {
 			.map((column) => {
 				return { Header: column, accessor: column }
 			})
+		console.log(columns)
 		formattedColumns.push({ Header: "", accessor: "delete" })
 		formattedColumns.push({ Header: "", accessor: "edit" })
 		return formattedColumns

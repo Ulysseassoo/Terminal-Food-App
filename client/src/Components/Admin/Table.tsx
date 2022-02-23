@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import React, { useContext } from "react"
 import { useTable } from "react-table"
+import { toast } from "react-toastify"
 import styled from "styled-components"
 import { ProductsContext } from "../../Context/ProductsProvider"
 import { getColumns, getFormattedData } from "../../Helpers/useTableData"
@@ -34,6 +35,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 	const deleteItem = async (id: number) => {
 		const token = localStorage.getItem("token")
 		const result = $product ? await deleteProduct(id, token!) : await deleteIngredient(id, token!)
+		toast.success("Your item has been deleted")
 		$product && deleteProductFromContext(id)
 	}
 
@@ -46,9 +48,9 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		<Container>
 			<Tab {...getTableProps()}>
 				<thead>
-					{headerGroups.map((headerGroup) => (
+					{headerGroups.map((headerGroup, headerIndex) => (
 						<Tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column) => {
+							{headerGroup.headers.map((column, columnIndex) => {
 								if (column.id === "delete" && $order) return <></>
 								if (column.id === "edit" && $order) return <></>
 								return <Th {...column.getHeaderProps()}>{column.render("Header")}</Th>
@@ -63,7 +65,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 
 						return (
 							<Tr {...row.getRowProps()}>
-								{row.cells.map((cell) => {
+								{row.cells.map((cell, cellIndex) => {
 									if (cell.column.id === "delete" && $order === undefined) {
 										return (
 											<Td {...cell.getCellProps()} cellProps={cell.value}>

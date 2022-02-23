@@ -9,6 +9,7 @@ import { Chart } from "@styled-icons/boxicons-solid"
 import Table from "./Table"
 import Stock from "./Stock"
 import { Link } from "react-router-dom"
+import { IngredientsContext } from "../../Context/IngredientsProvider"
 
 interface ColumnProps {
 	width: string
@@ -16,7 +17,6 @@ interface ColumnProps {
 }
 
 const Content = () => {
-	const theme = useTheme()
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -27,7 +27,8 @@ const Content = () => {
 			}
 		}
 	}
-	const { orders } = useContext(OrdersContext)
+	const { orders, ordersLoading } = useContext(OrdersContext)
+	const { ingredientsLoading } = useContext(IngredientsContext)
 
 	const completedOrders = () => {
 		if (orders.length === 0 || orders === undefined || orders === null) return 0
@@ -43,6 +44,8 @@ const Content = () => {
 		}
 		return 0
 	}
+
+	if (ordersLoading || ingredientsLoading) return <></>
 
 	return (
 		<Container column gap="2rem" initial="hidden" animate="show" exit="hidden" variants={variants}>

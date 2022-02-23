@@ -44,12 +44,12 @@ const Details = ({ id, totalAmount, state, terminal, productToOrders, setSelecte
 				<List>
 					{productToOrders.map((item) => {
 						return (
-							<div>
+							<div key={item.product.id}>
 								<p>
 									{item.product.name} x {item.quantity}
 								</p>
 								{item.product.ingredients.map((ingredient) => {
-									return <Point>- {ingredient.name}</Point>
+									return <Point key={ingredient.id}>- {ingredient.name}</Point>
 								})}
 							</div>
 						)

@@ -11,6 +11,11 @@ interface OrderToSend {
 	terminal: string
 }
 
+interface ImageData {
+	productId: string
+	file: File
+}
+
 const url = "http://localhost:3500/api"
 
 export const kitchenLogin = async (postData: loginData) => {
@@ -131,4 +136,22 @@ export const sendOrder = async (order: OrderToSend) => {
 		}
 	})
 	return response
+}
+
+export const createProductImage = async (image: FormData, token: string) => {
+	const response = await axios.post(`${url}/images`, image, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
+}
+
+export const updateProductImage = async (image: FormData, token: string, imageId: number) => {
+	const response = await axios.put(`${url}/images/${imageId}`, image, {
+		headers: {
+			Authorization: token
+		}
+	})
+	return response.data
 }

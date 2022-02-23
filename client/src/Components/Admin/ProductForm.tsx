@@ -6,7 +6,7 @@ import styled from "styled-components"
 import { CategoriesContext } from "../../Context/CategoryProvider"
 import { IngredientsContext } from "../../Context/IngredientsProvider"
 import { ProductsContext } from "../../Context/ProductsProvider"
-import { createProduct, updateProduct } from "../../Services/APIs"
+import { createProduct, createProductImage, updateProduct, updateProductImage } from "../../Services/APIs"
 import SubmitButton from "../SubmitButton"
 interface DataForm {
 	price: number
@@ -15,6 +15,7 @@ interface DataForm {
 	category: string
 	calories: string
 	ingredients: never[]
+	image: FileList
 }
 
 const ProductForm = () => {
@@ -25,7 +26,6 @@ const ProductForm = () => {
 		register,
 		handleSubmit,
 		setValue,
-		getValues,
 		formState: { errors, isSubmitting }
 	} = useForm<DataForm>()
 	useEffect(() => {
@@ -42,6 +42,7 @@ const ProductForm = () => {
 		}
 	}, [])
 	const onSubmit = async (formData: DataForm) => {
+		console.log(formData)
 		if (typeof formData.ingredients === "string") {
 			formData.ingredients = Array.from(formData.ingredients)
 		}
@@ -53,16 +54,32 @@ const ProductForm = () => {
 		const category: Category = categories.find((category) => category.id === parseInt(formData.category))!
 
 		const token = localStorage.getItem("token")
-		const formattedData: Product = { ...formData, custom: false, available: false, ingredients: totalIngredients, category: category }
+		const formattedData: any = {
+			...formData,
+			custom: false,
+			available: false,
+			ingredients: totalIngredients,
+			category: category
+		}
+
 		try {
-			const { data, status } =
-				selectedProduct !== 0 ? await updateProduct(formattedData, token!, selectedProduct) : await createProduct(formattedData, token!)
-			if (status !== 200) throw new Error()
+			const result = selectedProduct !== 0 ? await updateProduct(formattedData, token!, selectedProduct) : await createProduct(formattedData, token!)
+			if (result.status !== 200 && result.status !== 201) throw Error
+			let newImageData = new FormData()
+			newImageData.append("file", formData.image[0])
+			if (selectedProduct === 0) {
+				newImageData.append("productId", result.data.id.toString())
+			}
+			const product = products.find((item) => item.id === selectedProduct)!
+			const imageResult =
+				selectedProduct !== 0 ? await updateProductImage(newImageData, token!, product?.image?.id!) : await createProductImage(newImageData, token!)
+			if (imageResult.status !== 200 && imageResult.status !== 201) throw Error
+			console.log(imageResult)
 			if (selectedProduct !== 0) {
-				updateProductFromContext(data)
+				updateProductFromContext(result.data)
 				toast.success("Your product has been edited")
 			} else {
-				addNewProduct(data)
+				addNewProduct(result.data)
 				toast.success("Your product has been created")
 			}
 			setShowForm(false)
@@ -97,6 +114,10 @@ const ProductForm = () => {
 				</Box>
 				<Box>
 					<Input type="text" id="calories" placeholder="calories" {...register("calories", { required: true })} />
+				</Box>
+				<Box>
+					<label htmlFor="image">Image</label>
+					<Input type="file" id="image" placeholder="Product image" {...register("image", { required: true })} />
 				</Box>
 				<Box>
 					<p>Ingredients</p>

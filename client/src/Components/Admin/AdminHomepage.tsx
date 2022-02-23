@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { OrdersContext } from "../../Context/OrdersProvider"
-import socketClient from "socket.io-client"
+import { socket } from "../../Services/socket"
 import styled from "styled-components"
 import { Main } from "../../globalStyles"
 import Content from "./Dashboard"
@@ -14,8 +14,7 @@ import { IngredientsContext } from "../../Context/IngredientsProvider"
 
 const AdminHomepage = () => {
 	const { orders, updateOrders, addNewOrder } = useContext(OrdersContext)
-	const { refreshQuantity } = useContext(IngredientsContext)
-	const ENDPOINT = "localhost:3500"
+	const { refreshQuantity, ingredients, setIngredients } = useContext(IngredientsContext)
 
 	const variants = {
 		hidden: { opacity: 0 },
@@ -29,7 +28,6 @@ const AdminHomepage = () => {
 	}
 
 	useEffect(() => {
-		const socket = socketClient(ENDPOINT)
 		socket.on("modifiedOrder", (data) => {
 			updateOrders(data.data)
 		})
@@ -40,9 +38,11 @@ const AdminHomepage = () => {
 			refreshQuantity(stock.data)
 		})
 		return () => {
-			socket.disconnect()
+			socket.off("modifiedOrder")
+			socket.off("newOrder")
+			socket.off("changedStock")
 		}
-	}, [orders])
+	}, [orders, ingredients])
 
 	return (
 		<Container initial="hidden" animate="show" exit="hidden" variants={variants}>

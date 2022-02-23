@@ -24,6 +24,7 @@ interface Props {
 	ingredients: Ingredient[]
 	quantity?: number
 	i: number
+	image: ProductImage
 }
 
 interface CartProps {
@@ -31,7 +32,7 @@ interface CartProps {
 	$available?: boolean
 }
 
-const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available, i }: Props) => {
+const ProductCard = ({ id, calories, category, name, price, description, custom, ingredients, $cart, quantity, available, i, image }: Props) => {
 	const variants = {
 		hidden: { opacity: 0, x: 10 * i },
 		show: {
@@ -43,6 +44,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 		}
 	}
 	const theme = useTheme()
+	const urlImage = "http://localhost:3500/uploads/"
 	const navigate = useNavigate()
 	const [editMode, setEditMode] = useState(false)
 	const { addProductToCart, deleteProductFromCart, reduceItemQuantity } = useContext(CartContext)!
@@ -50,7 +52,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 	const addProduct = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		event.stopPropagation()
 		if (!available) return toast.warning("This Product is no more available !")
-		addProductToCart({ id, calories, category, name, price, description, custom, ingredients, available })
+		addProductToCart({ id, calories, category, name, price, description, custom, ingredients, available, image })
 		toast.success("Product added to cart !")
 	}
 
@@ -58,14 +60,13 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 		if (!available) return toast.warning("This Product is no more available !")
 		navigate(`${category.name}/${id}`)
 	}
-
 	if ($cart) {
 		return (
 			<AnimatePresence>
 				<Container $cart variants={variants}>
 					<Trash onClick={() => deleteProductFromCart(id)} />
 					<ImageContainer $cart>
-						<img src={ProductImage} alt="Pizza Product" />
+						<img src={image !== null ? `${urlImage}${image.name}` : ProductImage} alt="Pizza Product" />
 					</ImageContainer>
 					<Content $cart>
 						<SubTitle $cart>{name}</SubTitle>
@@ -96,7 +97,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 			onClick={() => showItem()}
 			$available={available}>
 			<ImageContainer>
-				<img src={ProductImage} alt="Pizza Product" />
+				<img src={image !== null ? `${urlImage}${image.name}` : ProductImage} alt="Pizza Product" />
 			</ImageContainer>
 			<Content>
 				<SubTitle>{name}</SubTitle>
