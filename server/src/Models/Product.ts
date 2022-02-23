@@ -1,5 +1,18 @@
-import { BaseEntity, Column, Entity, Generated, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import {
+	BaseEntity,
+	Column,
+	Entity,
+	Generated,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
+	OneToOne,
+	PrimaryGeneratedColumn
+} from "typeorm"
 import { Category } from "./Category"
+import { Image } from "./Image"
 import { Ingredient } from "./Ingredient"
 import { Order } from "./Order"
 import { ProductToOrder } from "./ProductToOrder"
@@ -37,7 +50,12 @@ export class Product extends BaseEntity {
 	public productToOrders!: ProductToOrder[]
 
 	@ManyToMany(() => Ingredient, (ingredient) => ingredient.has, {
-		cascade: true
+		cascade: true,
+		onDelete: "CASCADE"
 	})
 	ingredients: Ingredient[]
+
+	@OneToOne(() => Image, (image) => image.product, { cascade: true })
+	@JoinColumn()
+	image: Image
 }

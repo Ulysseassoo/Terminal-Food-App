@@ -1,6 +1,7 @@
 import express from "express"
 
 export const isAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	console.log(req.headers.authorization)
 	if (req.user?.role === "admin") {
 		next()
 	} else {

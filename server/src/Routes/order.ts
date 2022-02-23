@@ -1,4 +1,7 @@
 import express from "express"
+import jwtExpress from "express-jwt"
+import dotenv from "dotenv"
+import path from "path"
 import { Order } from "../Models/Order"
 import { validationResult } from "express-validator"
 import { orderValidator } from "../Validator/orderValidator"
@@ -10,6 +13,12 @@ import { isAdmin, isKitchen } from "../Helpers/verify"
 import { Stock } from "../Models/Stock"
 
 const router = express.Router()
+
+dotenv.config({
+	path: path.resolve(__dirname, "../config.env")
+})
+
+const secret = process.env.JWT_SECRET
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
@@ -36,6 +45,29 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 	const { terminal, productToOrders }: Order = req.body
 
 	try {
+		// // Check if there are enough products quantity
+		// for (let i = 0; i < productToOrders.length; i++) {
+		// 	const productToOrder = productToOrders[i]
+		// 	for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
+		// 		const ingredient = productToOrder.product.ingredients[x]
+		// 		let oldStock = await Stock.findOne({
+		// 			where: {
+		// 				ingredient: ingredient.id
+		// 			}
+		// 		})
+		// 		if (oldStock.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
+		// 		oldStock.quantity -= productToOrder.quantity
+		// 		const newStock = await Stock.save(oldStock)
+		// 		req.io.emit("changedStock", { data: newStock })
+		// 		if (newStock.quantity === 0) {
+		// 			req.io.emit("unavailableProduct", {
+		// 				message: "This product is not available anymore",
+		// 				data: { ...productToOrder.product, available: false }
+		// 			})
+		// 		}
+		// 	}
+		// }
+
 		const order = new Order()
 		let totalAmount = 0
 		const orderState = await State.findOne({
@@ -74,7 +106,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 				oldStock.quantity -= productToOrder.quantity
 				const newStock = await Stock.save(oldStock)
 				req.io.emit("changedStock", { data: newStock })
-				if (oldStock.quantity === 0) {
+				if (newStock.quantity === 0) {
 					req.io.emit("unavailableProduct", {
 						message: "This product is not available anymore",
 						data: { ...productToOrder.product, available: false }

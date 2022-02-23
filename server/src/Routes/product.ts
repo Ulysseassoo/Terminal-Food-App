@@ -12,12 +12,12 @@ const router = express.Router()
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
 router.get("/products", async (req: express.Request, res: express.Response) => {
-	const products = await Product.find({ relations: ["ingredients", "category"], order: { id: "ASC" } })
+	const products = await Product.find({ relations: ["ingredients", "category", "image"], order: { id: "ASC" } })
 	res.json({ status: 200, data: products })
 	return
 })
 
-router.post("/products", productValidator, isAdmin, async (req: express.Request, res: express.Response) => {
+router.post("/products", productValidator, async (req: express.Request, res: express.Response) => {
 	const errors = validationResult(req)
 
 	if (!errors.isEmpty()) {
@@ -49,10 +49,10 @@ router.post("/products", productValidator, isAdmin, async (req: express.Request,
 		}
 
 		const result = await Product.save(product)
-		res.json({ status: 200, data: result })
+		res.json({ status: 201, data: result })
 		return
 	} catch (error) {
-		res.json({ status: 400, data: error })
+		res.json({ status: 400, data: error.message || error })
 		return
 	}
 })
