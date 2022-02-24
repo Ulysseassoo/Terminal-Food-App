@@ -26,6 +26,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 		? cart.find((item) => item.product.id === cartItemId)?.product
 		: products.find((product) => product.id === numberId)
 	const [customProduct, setCustomProduct] = useState<Product>(selectedProduct!)
+	const urlImage = "http://localhost:3500/uploads/"
 
 	useEffect(() => {
 		setCustomProduct(selectedProduct!)
@@ -94,7 +95,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 								{customProduct.ingredients.map((ingredient) => (
 									<IngredientsContainer key={ingredient.id}>
 										{/* <PlusCircle /> */}
-										<MinusCircle onClick={() => removeIngredientFromProduct(ingredient.id)} />
+										<MinusCircle onClick={() => removeIngredientFromProduct(ingredient?.id!)} />
 										<p key={ingredient.id}>{ingredient.name} </p>
 									</IngredientsContainer>
 								))}
@@ -121,7 +122,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 				<Line />
 				<Wrapper>
 					<ImageContainer>
-						<img src={Image} alt="Product item image" />
+						<img src={selectedProduct?.image !== null ? `${urlImage}${selectedProduct?.image?.name}` : Image} alt="Product item image" />
 					</ImageContainer>
 					<Content>
 						<Column>
@@ -132,8 +133,7 @@ const Modal = ({ cartItemId, setEditMode }: Props) => {
 							<Subtitle>Ingredients</Subtitle>
 							{customProduct?.ingredients.map((ingredient) => (
 								<IngredientsContainer key={ingredient.id}>
-									{/* <PlusCircle /> */}
-									<MinusCircle onClick={() => removeIngredientFromProduct(ingredient.id)} />
+									<MinusCircle onClick={() => removeIngredientFromProduct(ingredient?.id!)} />
 									<p key={ingredient.id}>{ingredient.name} </p>
 								</IngredientsContainer>
 							))}

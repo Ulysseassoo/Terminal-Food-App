@@ -1,11 +1,13 @@
 import { motion } from "framer-motion"
 import React, { useContext } from "react"
-import { useTable } from "react-table"
+import { useTable, usePagination } from "react-table"
 import { toast } from "react-toastify"
 import styled from "styled-components"
 import { ProductsContext } from "../../Context/ProductsProvider"
 import { getColumns, getFormattedData } from "../../Helpers/useTableData"
 import { deleteIngredient, deleteProduct } from "../../Services/APIs"
+import ProductImage from "../../assets/pizzaz.png"
+import { IngredientsContext } from "../../Context/IngredientsProvider"
 
 interface Props {
 	contextData: (Order | Product | Ingredient)[]
@@ -18,6 +20,9 @@ interface CellProps {
 }
 const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 	const { deleteProductFromContext, setShowForm, setSelectedProduct } = useContext(ProductsContext)
+	const { deleteIngredientFromContext } = useContext(IngredientsContext)
+	const urlImage = "http://localhost:3500/uploads/"
+
 	const data = React.useMemo(
 		() => getFormattedData(contextData),
 
@@ -30,13 +35,29 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		[contextData]
 	)
 
-	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data })
+	const {
+		getTableProps,
+		getTableBodyProps,
+		headerGroups,
+		prepareRow,
+		page,
+		// canPreviousPage,
+		// canNextPage,
+		// pageOptions,
+		// pageCount,
+		// gotoPage,
+		// nextPage,
+		// previousPage,
+		// setPageSize,
+		state: { pageIndex, pageSize }
+	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination)
 
 	const deleteItem = async (id: number) => {
 		const token = localStorage.getItem("token")
 		const result = $product ? await deleteProduct(id, token!) : await deleteIngredient(id, token!)
 		toast.success("Your item has been deleted")
 		$product && deleteProductFromContext(id)
+		!$product && deleteIngredientFromContext(id)
 	}
 
 	const editItem = async (id: number) => {
@@ -60,7 +81,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 				</thead>
 
 				<tbody {...getTableBodyProps()}>
-					{rows.map((row) => {
+					{page.map((row) => {
 						prepareRow(row)
 
 						return (
@@ -82,6 +103,15 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 									}
 									if (cell.column.id === "delete" || (cell.column.id === "edit" && $order)) {
 										return <></>
+									}
+									if (cell.column.id === "image") {
+										return (
+											<Td {...cell.getCellProps()} cellProps={cell.value}>
+												<ImageContainer>
+													<img src={cell.value !== "" ? `${urlImage}${cell.value}` : ProductImage} alt="product image" />
+												</ImageContainer>
+											</Td>
+										)
 									}
 									return (
 										<Td {...cell.getCellProps()} cellProps={cell.value}>
@@ -173,5 +203,15 @@ const EditButton = styled(motion.button)`
 	cursor: pointer;
 	border: none;
 	border-radius: 0.25rem;
+`
+
+const ImageContainer = styled(motion.div)`
+	padding: 0.2rem;
+	width: 50px;
+	height: 50px;
+	& > img {
+		height: 100%;
+		width: 100%;
+	}
 `
 export default Table

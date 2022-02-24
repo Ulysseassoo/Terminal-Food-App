@@ -32,9 +32,10 @@ const Cart = ({ setShowCart }: Props) => {
 	const navigate = useNavigate()
 
 	const cartCheckout = async () => {
+		const token = localStorage.getItem("token")
 		try {
 			if (cart.length <= 0) throw Error("You can't order with no product selected.")
-			const { status } = await sendOrder({ terminal: "a1a23c2d-a0c8-4e58-a86d-4011b01ff63c", productToOrders: cart })
+			const { status } = await sendOrder({ terminal: "a1a23c2d-a0c8-4e58-a86d-4011b01ff63c", productToOrders: cart }, token ?? "")
 			if (status === 201) {
 				checkout()
 				navigate("/checkout")

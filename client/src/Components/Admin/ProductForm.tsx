@@ -42,7 +42,6 @@ const ProductForm = () => {
 		}
 	}, [])
 	const onSubmit = async (formData: DataForm) => {
-		console.log(formData)
 		if (typeof formData.ingredients === "string") {
 			formData.ingredients = Array.from(formData.ingredients)
 		}
@@ -74,12 +73,11 @@ const ProductForm = () => {
 			const imageResult =
 				selectedProduct !== 0 ? await updateProductImage(newImageData, token!, product?.image?.id!) : await createProductImage(newImageData, token!)
 			if (imageResult.status !== 200 && imageResult.status !== 201) throw Error
-			console.log(imageResult)
 			if (selectedProduct !== 0) {
-				updateProductFromContext(result.data)
+				updateProductFromContext(imageResult.data)
 				toast.success("Your product has been edited")
 			} else {
-				addNewProduct(result.data)
+				addNewProduct(imageResult.data)
 				toast.success("Your product has been created")
 			}
 			setShowForm(false)

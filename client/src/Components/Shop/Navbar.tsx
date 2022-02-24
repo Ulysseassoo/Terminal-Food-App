@@ -6,22 +6,25 @@ import { Search } from "@styled-icons/feather/Search"
 import { CartContext } from "../../Context/CartProvider"
 import Cart from "./Cart"
 import { AnimatePresence } from "framer-motion"
+import ProductCartForm from "./ProductCartForm"
 
 const Navbar = () => {
 	const { cart } = useContext(CartContext)!
 	const [showCart, setShowCart] = useState(false)
+	const [showAddForm, setShowAddForm] = useState(false)
 
 	return (
 		<AnimatePresence>
-			{showCart && <Shadow key="shadow" />}
+			{(showCart || showAddForm) && <Shadow key="shadow" />}
 			{showCart && <Cart setShowCart={setShowCart} key="cartShow" />}
+			{showAddForm && <ProductCartForm setShowAddForm={setShowAddForm} key="cartProductForm" />}
 			<Container>
 				<Logo>
 					Pizz
 					<Pizza /> restaurant
 				</Logo>
 				<Icons>
-					<Search />
+					<Button onClick={() => setShowAddForm(true)}> Create your product</Button>
 					<CartContainer>
 						<Notifications>{cart.length}</Notifications>
 						<ShoppingCart onClick={() => setShowCart(true)} />
@@ -104,6 +107,21 @@ const Shadow = styled.div`
 	position: absolute;
 	background-color: ${({ theme }) => theme.colors.backgroundShadow};
 	z-index: 30;
+`
+
+const Button = styled.button`
+	padding: 0.5rem;
+	font-family: ${({ theme }) => theme.fonts.normal};
+	color: ${({ theme }) => theme.colors.text};
+	background-color: ${({ theme }) => theme.colors.secondary};
+	border: 1px solid ${({ theme }) => theme.colors.text};
+	text-transform: uppercase;
+	font-size: ${({ theme }) => theme.size.s};
+	cursor: pointer;
+	transition: 0.3s ease;
+	&:hover {
+		opacity: 0.9;
+	}
 `
 
 export default Navbar

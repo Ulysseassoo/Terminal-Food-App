@@ -25,12 +25,6 @@ export const UserProvider: React.FC = ({ children }) => {
 	const [user, setUser] = useState<User>(initialState.user)
 	const [userLoading, setUserLoading] = useState(false)
 	const navigate = useNavigate()
-
-	// useEffect(() => {
-	// 	const token = localStorage.getItem("token")
-	// 	console.log(user)
-	// }, [])
-
 	const sessionEnd = () => {
 		setUser(initialState.user)
 		setUserLoading(false)

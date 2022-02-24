@@ -1,6 +1,12 @@
 import { createContext, useEffect, useState } from "react"
 import { getProducts } from "../Services/APIs"
 
+interface ImageFetchedProduct {
+	id: number
+	name: string
+	product: Product
+}
+
 type ProductsContextType = {
 	productsLoading: boolean
 	products: Product[]
@@ -13,8 +19,8 @@ type ProductsContextType = {
 	selectedProduct: number
 	setSelectedProduct: React.Dispatch<React.SetStateAction<number>>
 	deleteProductFromContext: (id: number) => void
-	addNewProduct: (payload: Product) => void
-	updateProductFromContext: (payload: Product) => void
+	addNewProduct: (payload: ImageFetchedProduct) => void
+	updateProductFromContext: (payload: ImageFetchedProduct) => void
 }
 
 const initialState = {
@@ -29,8 +35,8 @@ const initialState = {
 	setSelectedProduct: () => {},
 	setCategory: () => {},
 	deleteProductFromContext: (id: number) => {},
-	addNewProduct: (payload: Product) => {},
-	updateProductFromContext: (payload: Product) => {}
+	addNewProduct: (payload: ImageFetchedProduct) => {},
+	updateProductFromContext: (payload: ImageFetchedProduct) => {}
 }
 
 export const ProductsContext = createContext<ProductsContextType>(initialState)
@@ -53,8 +59,9 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		}
 	}
 
-	const addNewProduct = (payload: Product) => {
-		const newProducts = [...products, payload]
+	const addNewProduct = (payload: ImageFetchedProduct) => {
+		const formattedPayload: Product = { ...payload.product, image: { name: payload.name, id: payload.id } }
+		const newProducts = [...products, formattedPayload]
 		setProducts(newProducts)
 	}
 
@@ -63,11 +70,12 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		setProducts(newProducts)
 	}
 
-	const updateProductFromContext = (payload: Product) => {
+	const updateProductFromContext = (payload: ImageFetchedProduct) => {
+		const formattedPayload: Product = { ...payload.product, image: { name: payload.name, id: payload.id } }
 		const newProducts = [
 			...products.map((item) => {
 				if (item.id === payload.id) {
-					return { ...item, ...payload }
+					return { ...item, ...formattedPayload }
 				}
 				return item
 			})

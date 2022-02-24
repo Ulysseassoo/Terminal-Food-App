@@ -129,10 +129,11 @@ export const updateOrder = async (token: string, data: Order): Promise<Order> =>
 	return response.data
 }
 
-export const sendOrder = async (order: OrderToSend) => {
+export const sendOrder = async (order: OrderToSend, token: string) => {
 	const response = await axios.post(`${url}/orders`, order, {
 		headers: {
-			"Content-type": "application/json"
+			"Content-type": "application/json",
+			Authorization: token
 		}
 	})
 	return response

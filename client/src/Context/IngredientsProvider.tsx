@@ -9,7 +9,7 @@ type IngredientsContextType = {
 	updateIngredientFromContext: (ingredient: Ingredient) => void
 	setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>
 	addNewIngredient: (ingredient: Ingredient) => void
-	deleteIngredient: (id: number) => void
+	deleteIngredientFromContext: (id: number) => void
 	refreshQuantity: (stock: Stock) => void
 }
 
@@ -20,7 +20,7 @@ const initialState = {
 	setIngredients: () => {},
 	updateIngredientFromContext: (ingredient: Ingredient) => {},
 	addNewIngredient: (ingredient: Ingredient) => {},
-	deleteIngredient: (id: number) => {},
+	deleteIngredientFromContext: (id: number) => {},
 	refreshQuantity: (stock: Stock) => {}
 }
 
@@ -58,7 +58,7 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 		setIngredients(newIngredients)
 	}
 
-	const deleteIngredient = (id: number) => {
+	const deleteIngredientFromContext = (id: number) => {
 		const filteredIngredients = ingredients.filter((ingredient) => ingredient.id !== id)
 		setIngredients(filteredIngredients)
 	}
@@ -76,11 +76,8 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 	}
 
 	useEffect(() => {
-		if (user.role === "admin") {
-			const token = localStorage.getItem("token")
-			getAllIngredients(token!)
-			return
-		}
+		const token = localStorage.getItem("token")
+		getAllIngredients(token!)
 	}, [user])
 
 	return (
@@ -90,7 +87,7 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 				getAllIngredients,
 				refreshQuantity,
 				setIngredients,
-				deleteIngredient,
+				deleteIngredientFromContext,
 				ingredientsLoading,
 				updateIngredientFromContext,
 				addNewIngredient

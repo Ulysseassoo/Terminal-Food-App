@@ -4,10 +4,15 @@ function instanceOfOrder(array: any): array is Order {
 
 export const getColumns = (contextData: (Order | Product | Ingredient)[]) => {
 	if (contextData.length > 0) {
-		const columns = Object.keys(contextData[contextData.length - 2])
-		columns.find((item) => item === "productToOrders") && columns.splice(3, 1)
-		columns.find((item) => item === "available") && columns.splice(6, 4)
-		columns.find((item) => item === "stock") && columns.splice(3, 1)
+		let columns: String[] = []
+		const contextArray = Object.keys(contextData[0])
+		if (contextArray.find((item) => item === "productToOrders")) {
+			columns = ["id", "createdAt", "totalAmount", "terminal", "state"]
+		} else if (contextArray.find((item) => item === "available")) {
+			columns = ["id", "image", "name", "description", "calories", "price", "custom"]
+		} else {
+			columns = ["id", "name", "important"]
+		}
 		const formattedColumns = columns
 			.sort((a, b) => {
 				if (a === b) {
@@ -23,7 +28,6 @@ export const getColumns = (contextData: (Order | Product | Ingredient)[]) => {
 			.map((column) => {
 				return { Header: column, accessor: column }
 			})
-		console.log(columns)
 		formattedColumns.push({ Header: "", accessor: "delete" })
 		formattedColumns.push({ Header: "", accessor: "edit" })
 		return formattedColumns
@@ -68,6 +72,9 @@ export const getFormattedData = (contextData: (Order | Product | Ingredient)[]) 
 							break
 						case "price":
 							objectData[key] = `${item[key]} $`
+							break
+						case "image":
+							objectData[key] = item[key] !== null ? item[key].name : ""
 							break
 						default:
 							objectData[key] = item[key]
