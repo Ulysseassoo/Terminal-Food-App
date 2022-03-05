@@ -21,7 +21,7 @@ interface DataForm {
 const ProductForm = () => {
 	const { ingredients } = useContext(IngredientsContext)
 	const { categories, categoriesLoading } = useContext(CategoriesContext)
-	const { addNewProduct, setShowForm, selectedProduct, setSelectedProduct, products, updateProductFromContext } = useContext(ProductsContext)
+	const { addNewProduct, setShowForm, selectedProduct, setSelectedProduct, products, updateProductImageFromContext } = useContext(ProductsContext)
 	const {
 		register,
 		handleSubmit,
@@ -74,7 +74,7 @@ const ProductForm = () => {
 				selectedProduct !== 0 ? await updateProductImage(newImageData, token!, product?.image?.id!) : await createProductImage(newImageData, token!)
 			if (imageResult.status !== 200 && imageResult.status !== 201) throw Error
 			if (selectedProduct !== 0) {
-				updateProductFromContext(imageResult.data)
+				updateProductImageFromContext(imageResult.data)
 				toast.success("Your product has been edited")
 			} else {
 				addNewProduct(imageResult.data)

@@ -9,11 +9,18 @@ import { useParams } from "react-router"
 import Modal from "../Components/Shop/Modal"
 import { AnimatePresence, motion } from "framer-motion"
 import { ProductsContext } from "../Context/ProductsProvider"
+import { socket } from "../Services/socket"
+import { toast } from "react-toastify"
+
+interface messageProduct {
+	data: Product
+	message: string
+}
 
 const Shop = () => {
 	const theme = useTheme()
 	const params = useParams()
-	const { category } = useContext(ProductsContext)
+	const { category, updateProductFromContext, products } = useContext(ProductsContext)
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -23,6 +30,17 @@ const Shop = () => {
 			}
 		}
 	}
+
+	useEffect(() => {
+		socket.on("unavailableProduct", (data: messageProduct) => {
+			toast.warning(data.message)
+			updateProductFromContext(data.data)
+		})
+
+		return () => {
+			socket.off("unavailableProduct")
+		}
+	}, [products])
 
 	return (
 		<Container column background={theme.colors.background}>

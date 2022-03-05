@@ -44,7 +44,7 @@ const Products = () => {
 			orders.map((order) => {
 				order.productToOrders.map((cart) => {
 					if (product.id === cart.product.id) {
-						income += product.price
+						income += product.price * cart.quantity
 					}
 				})
 			})

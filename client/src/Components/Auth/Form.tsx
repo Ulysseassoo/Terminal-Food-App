@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled from "styled-components"
+import { socket } from "../../Services/socket"
 import { UserContext } from "../../Context/UserProvider"
 import { adminLogin, kitchenLogin, userLogin } from "../../Services/APIs"
 import SubmitButton from "../SubmitButton"
@@ -36,6 +37,7 @@ const Form = () => {
 				pathname === "/admin" ? await adminLogin(formData) : pathname === "/user" ? await userLogin(formData) : await kitchenLogin(formData)
 			localStorage.setItem("token", data.token)
 			setUser(data.data)
+			socket.emit("user_join", data.data.role)
 			toast.success("You are now connected !")
 			pathname === "/admin" ? navigate("/admin/dashboard") : pathname === "/user" ? navigate("/menu") : navigate("/kitchen/homepage")
 		} catch (error: any) {

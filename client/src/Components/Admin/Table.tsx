@@ -8,6 +8,7 @@ import { getColumns, getFormattedData } from "../../Helpers/useTableData"
 import { deleteIngredient, deleteProduct } from "../../Services/APIs"
 import ProductImage from "../../assets/pizzaz.png"
 import { IngredientsContext } from "../../Context/IngredientsProvider"
+import type { TableInstance, Row } from "react-table"
 
 interface Props {
 	contextData: (Order | Product | Ingredient)[]
@@ -18,6 +19,18 @@ interface Props {
 interface CellProps {
 	cellProps: any
 }
+
+type TableTypeWorkaround<T extends Object> = TableInstance<T> & {
+	gotoPage: (index: number) => void
+	page: Row<{
+		[key: string]: any
+	}>[]
+	state: {
+		pageIndex: number
+		pageSize: number
+	}
+}
+
 const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 	const { deleteProductFromContext, setShowForm, setSelectedProduct } = useContext(ProductsContext)
 	const { deleteIngredientFromContext } = useContext(IngredientsContext)
@@ -50,7 +63,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		// previousPage,
 		// setPageSize,
 		state: { pageIndex, pageSize }
-	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination)
+	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination) as TableTypeWorkaround<T>
 
 	const deleteItem = async (id: number) => {
 		const token = localStorage.getItem("token")

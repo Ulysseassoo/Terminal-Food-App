@@ -1,7 +1,3 @@
-function instanceOfOrder(array: any): array is Order {
-	return true
-}
-
 export const getColumns = (contextData: (Order | Product | Ingredient)[]) => {
 	if (contextData.length > 0) {
 		let columns: String[] = []

@@ -13,7 +13,7 @@ import Modal from "./Modal"
 
 interface Props {
 	$cart?: boolean
-	id: number
+	id?: number
 	calories: string
 	category: Category
 	name: string
@@ -24,7 +24,7 @@ interface Props {
 	ingredients: Ingredient[]
 	quantity?: number
 	i: number
-	image: ProductImage
+	image?: ProductImage | null
 }
 
 interface CartProps {
@@ -64,9 +64,9 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 		return (
 			<AnimatePresence>
 				<Container $cart variants={variants}>
-					<Trash onClick={() => deleteProductFromCart(id)} />
+					<Trash onClick={() => deleteProductFromCart(id!)} />
 					<ImageContainer $cart>
-						<img src={image !== null ? `${urlImage}${image.name}` : ProductImage} alt="Pizza Product" />
+						<img src={image !== null ? `${urlImage}${image?.name}` : ProductImage} alt="Pizza Product" />
 					</ImageContainer>
 					<Content $cart>
 						<SubTitle $cart>{name}</SubTitle>
@@ -77,7 +77,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 							<Counter>{quantity}</Counter>
 							<MinusSquare
 								onClick={() => {
-									quantity! >= 1 && reduceItemQuantity(id)
+									quantity! >= 1 && reduceItemQuantity(id!)
 								}}
 							/>
 						</QuantityContainer>
@@ -97,7 +97,7 @@ const ProductCard = ({ id, calories, category, name, price, description, custom,
 			onClick={() => showItem()}
 			$available={available}>
 			<ImageContainer>
-				<img src={image !== null ? `${urlImage}${image.name}` : ProductImage} alt="Pizza Product" />
+				<img src={image !== null ? `${urlImage}${image?.name}` : ProductImage} alt="Pizza Product" />
 			</ImageContainer>
 			<Content>
 				<SubTitle>{name}</SubTitle>

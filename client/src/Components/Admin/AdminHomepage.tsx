@@ -11,6 +11,7 @@ import Ingredients from "./Ingredients"
 import Products from "./Products"
 import { AnimatePresence } from "framer-motion"
 import { IngredientsContext } from "../../Context/IngredientsProvider"
+import { toast } from "react-toastify"
 
 const AdminHomepage = () => {
 	const { orders, updateOrders, addNewOrder } = useContext(OrdersContext)
@@ -35,6 +36,9 @@ const AdminHomepage = () => {
 			addNewOrder(order.data)
 		})
 		socket.on("changedStock", (stock) => {
+			if (stock.data.quantity === 0) {
+				toast.warning(`${stock.data.ingredient.name} ingredient quantity reached 0`)
+			}
 			refreshQuantity(stock.data)
 		})
 		return () => {

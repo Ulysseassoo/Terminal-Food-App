@@ -61,7 +61,7 @@ const ProductCartForm = ({ setShowAddForm }: Props) => {
 			name: "Custom Pizza",
 			custom: true,
 			calories: "300kcal",
-			description: "client products",
+			description: "client product",
 			price: 15,
 			available: true,
 			category: productCategory,

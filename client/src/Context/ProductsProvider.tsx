@@ -20,7 +20,8 @@ type ProductsContextType = {
 	setSelectedProduct: React.Dispatch<React.SetStateAction<number>>
 	deleteProductFromContext: (id: number) => void
 	addNewProduct: (payload: ImageFetchedProduct) => void
-	updateProductFromContext: (payload: ImageFetchedProduct) => void
+	updateProductImageFromContext: (payload: ImageFetchedProduct) => void
+	updateProductFromContext: (payload: Product) => void
 }
 
 const initialState = {
@@ -36,7 +37,8 @@ const initialState = {
 	setCategory: () => {},
 	deleteProductFromContext: (id: number) => {},
 	addNewProduct: (payload: ImageFetchedProduct) => {},
-	updateProductFromContext: (payload: ImageFetchedProduct) => {}
+	updateProductImageFromContext: (payload: ImageFetchedProduct) => {},
+	updateProductFromContext: (payload: Product) => {}
 }
 
 export const ProductsContext = createContext<ProductsContextType>(initialState)
@@ -70,12 +72,24 @@ export const ProductsProvider: React.FC = ({ children }) => {
 		setProducts(newProducts)
 	}
 
-	const updateProductFromContext = (payload: ImageFetchedProduct) => {
+	const updateProductImageFromContext = (payload: ImageFetchedProduct) => {
 		const formattedPayload: Product = { ...payload.product, image: { name: payload.name, id: payload.id } }
 		const newProducts = [
 			...products.map((item) => {
-				if (item.id === payload.id) {
+				if (item.id === formattedPayload.id) {
 					return { ...item, ...formattedPayload }
+				}
+				return item
+			})
+		]
+		setProducts(newProducts)
+	}
+
+	const updateProductFromContext = (payload: Product) => {
+		const newProducts = [
+			...products.map((item) => {
+				if (item.id === payload.id) {
+					return { ...item, ...payload }
 				}
 				return item
 			})
@@ -102,6 +116,7 @@ export const ProductsProvider: React.FC = ({ children }) => {
 				setCategory,
 				selectedProduct,
 				setSelectedProduct,
+				updateProductImageFromContext,
 				updateProductFromContext
 			}}>
 			{children}

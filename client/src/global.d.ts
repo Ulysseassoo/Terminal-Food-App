@@ -74,7 +74,7 @@ declare global {
 		custom: boolean
 		available: boolean
 		category: Category
-		image?: ProductImage
+		image?: ProductImage | null
 	}
 
 	interface User {
