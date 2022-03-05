@@ -14,6 +14,9 @@ import OrderRoute from "./Routes/order"
 import ProductRoute from "./Routes/product"
 import IngredientRoute from "./Routes/ingredient"
 import ImageRoute from "./Routes/image"
+import { Server } from "socket.io"
+import { User } from "./Models/User"
+import { UserLogged } from "./Interfaces/UserLogged"
 
 // Declaire Global User Variable
 declare global {
@@ -35,11 +38,10 @@ dotenv.config({
 	path: path.resolve(__dirname, "config.env")
 })
 
+export let users: UserLogged[] = []
 const app = express()
 const port = 3500
 const server = http.createServer(app)
-import { Server } from "socket.io"
-import { User } from "./Models/User"
 const io = new Server(server, {
 	cors: {
 		origin: "*",
@@ -114,6 +116,14 @@ createConnection()
 
 io.on("connection", (socket) => {
 	console.log(`a user connected: ${socket.id}`)
+	socket.on("user_join", (data: string) => {
+		users.push({ user_role: data, socket_id: socket.id })
+	})
+	socket.on("disconnect", () => {
+		const socketIndex = users.findIndex((data) => data.socket_id === socket.id)
+		socketIndex && users.splice(socketIndex, 1)
+	})
+	console.log(users)
 })
 
 server.listen(port, () => {

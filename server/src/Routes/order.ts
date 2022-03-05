@@ -12,6 +12,9 @@ import { Product } from "../Models/Product"
 import { isAdmin, isKitchen } from "../Helpers/verify"
 import { Stock } from "../Models/Stock"
 import { transporter } from "../Helpers/MailTransporter"
+import { Ingredient } from "../Models/Ingredient"
+import { ProductToOrder } from "../Models/ProductToOrder"
+import { users } from ".."
 
 const router = express.Router()
 
@@ -20,6 +23,40 @@ dotenv.config({
 })
 
 const secret = process.env.JWT_SECRET
+
+//  ------------------------------------------ FUNCTIONS ----------------------------------------------
+const renderProductsUnavailable = async (ingredientId: number, req: express.Request) => {
+	const products = await Product.find({ relations: ["ingredients"] })
+	for (const product of products) {
+		if (product.ingredients.find((ingredient) => ingredient.id === ingredientId) && !product.custom) {
+			product.available = false
+			const result = await Product.save(product)
+			// Then we send the request by socket
+			req.io.emit("unavailableProduct", {
+				message: `This product : ${result.name} is not available anymore`,
+				data: result
+			})
+		}
+	}
+}
+
+const checkIngredientsQuantity = async (productToOrders: ProductToOrder[]) => {
+	// Check total ingredients in the order by the quantity for each order
+	// Then get each ingredient and substract it and if everything is okay then we can substract it
+	const ingredients = await Ingredient.find({ relations: ["stock"] })
+	for (const ingredient of ingredients) {
+		for (const productToOrder of productToOrders) {
+			for (const productIngredient of productToOrder.product.ingredients) {
+				if (productIngredient.id === ingredient.id) {
+					if (ingredient.stock.quantity < 0) return false
+					ingredient.stock.quantity -= productToOrder.quantity
+					if (ingredient.stock.quantity < 0) return false
+				}
+			}
+		}
+	}
+	return true
+}
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
@@ -46,29 +83,6 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 	const { terminal, productToOrders }: Order = req.body
 
 	try {
-		// // Check if there are enough products quantity
-		// for (let i = 0; i < productToOrders.length; i++) {
-		// 	const productToOrder = productToOrders[i]
-		// 	for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
-		// 		const ingredient = productToOrder.product.ingredients[x]
-		// 		let oldStock = await Stock.findOne({
-		// 			where: {
-		// 				ingredient: ingredient.id
-		// 			}
-		// 		})
-		// 		if (oldStock.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
-		// 		oldStock.quantity -= productToOrder.quantity
-		// 		const newStock = await Stock.save(oldStock)
-		// 		req.io.emit("changedStock", { data: newStock })
-		// 		if (newStock.quantity === 0) {
-		// 			req.io.emit("unavailableProduct", {
-		// 				message: "This product is not available anymore",
-		// 				data: { ...productToOrder.product, available: false }
-		// 			})
-		// 		}
-		// 	}
-		// }
-
 		const order = new Order()
 		let totalAmount = 0
 		const orderState = await State.findOne({
@@ -93,6 +107,9 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			})
 			order.user = orderUser
 		}
+		const isStockEnough = await checkIngredientsQuantity(productToOrders)
+		if (!isStockEnough) throw Error("There is not enough quantity to do your order. Please reconsider.")
+
 		for (let i = 0; i < productToOrders.length; i++) {
 			const productToOrder = productToOrders[i]
 			for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
@@ -103,14 +120,22 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 					},
 					relations: ["ingredient"]
 				})
-				if (oldStock.quantity === 0) throw Error("There is not enough quantity to do your order. Please reconsider.")
 				oldStock.quantity -= productToOrder.quantity
 				const newStock = await Stock.save(oldStock)
 				req.io.emit("changedStock", { data: newStock })
 				if (newStock.quantity === 0) {
-					req.io.emit("unavailableProduct", {
-						message: "This product is not available anymore",
-						data: { ...productToOrder.product, available: false }
+					// Get all products that have this product and render them unavailable
+					renderProductsUnavailable(newStock.id, req)
+					if (users.find((data) => data.user_role === "admin")) {
+						req.io
+							.to(users.find((data) => data.user_role === "admin").socket_id)
+							.emit("unavailableIngredient", { message: `This product: ${newStock.ingredient.name} quantity reached 0` })
+					}
+					await transporter.sendMail({
+						from: "pizza-restaurant@official.fr",
+						to: "admin@pizza-restaurant.fr",
+						subject: `Product :  ${newStock.ingredient.name}`,
+						html: "It is not available anymore !"
 					})
 				}
 			}
@@ -128,7 +153,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			data: order
 		})
 		console.log(req.user)
-		if (req.user) {
+		if (req.user !== undefined) {
 			await transporter.sendMail({
 				from: "pizza-restaurant@official.fr",
 				to: req.user.email,
@@ -138,8 +163,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		}
 		return
 	} catch (error) {
-		console.log(error)
-		res.json({ status: 400, data: error.message })
+		res.status(200).json({ status: 200, data: error.message })
 		return
 	}
 })
