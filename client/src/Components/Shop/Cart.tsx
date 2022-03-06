@@ -5,7 +5,9 @@ import { toast } from "react-toastify"
 import styled from "styled-components"
 import { Close } from "styled-icons/material"
 import { CartContext } from "../../Context/CartProvider"
+import { TerminalContext } from "../../Context/TerminalProvider"
 import { sendOrder } from "../../Services/APIs"
+import { socket } from "../../Services/socket"
 import ProductCard from "./ProductCard"
 
 interface Props {
@@ -29,15 +31,17 @@ const variants = {
 
 const Cart = ({ setShowCart }: Props) => {
 	const { cart, getTotalPrice, checkout } = useContext(CartContext)
+	const { terminal, disconnectTerminal } = useContext(TerminalContext)
 	const navigate = useNavigate()
 
 	const cartCheckout = async () => {
 		const token = localStorage.getItem("token")
 		try {
 			if (cart.length <= 0) throw Error("You can't order with no product selected.")
-			const { status, data } = await sendOrder({ terminal: "a1a23c2d-a0c8-4e58-a86d-4011b01ff63c", productToOrders: cart }, token ?? "")
+			const { status, data } = await sendOrder({ terminal: terminal.unique_id, productToOrders: cart }, token ?? "")
 			if (status === 201) {
 				checkout()
+				disconnectTerminal()
 				navigate("/checkout")
 			} else {
 				toast.error(data.data)

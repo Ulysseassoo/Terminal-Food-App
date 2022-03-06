@@ -15,6 +15,7 @@ import PrivateRoute from "./Components/PrivateRoute"
 import KitchenHomepage from "./Components/Kitchen/KitchenHomepage"
 import AdminHomepage from "./Components/Admin/AdminHomepage"
 import GlobalProvider from "./Context/GlobalProvider"
+import { socket } from "./Services/socket"
 
 const App = (): JSX.Element => {
 	return (
