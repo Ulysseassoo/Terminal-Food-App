@@ -17,6 +17,8 @@ import ImageRoute from "./Routes/image"
 import { Server } from "socket.io"
 import { User } from "./Models/User"
 import { UserLogged } from "./Interfaces/UserLogged"
+import { Terminal } from "./Models/Terminal"
+import { TerminalConnected } from "./Interfaces/TerminalConnected"
 
 // Declaire Global User Variable
 declare global {
@@ -39,6 +41,8 @@ dotenv.config({
 })
 
 export let users: UserLogged[] = []
+let terminalsConnected: TerminalConnected[] = []
+
 const app = express()
 const port = 3500
 const server = http.createServer(app)
@@ -114,16 +118,44 @@ createConnection()
 	})
 	.catch((error) => console.log(error))
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	console.log(`a user connected: ${socket.id}`)
+	const connectTerminal = async () => {
+		const terminals = await Terminal.find()
+		let terminalToBeConnected: Terminal
+		// Check if a terminal is connected
+		terminals.every((terminal) => {
+			if (!terminalsConnected.find((terminalConnected) => terminalConnected.terminal.id === terminal.id)) {
+				terminalsConnected.push({ socket_id: socket.id, terminal: terminal })
+				terminalToBeConnected = terminal
+				return false
+			}
+			return true
+		})
+
+		return terminalToBeConnected
+	}
+	let terminalConnected: Terminal = await connectTerminal()
+	socket.on("get_terminal", () => {
+		console.log("get_termial")
+		io.emit("connect_terminal", { data: terminalConnected })
+	})
 	socket.on("user_join", (data: string) => {
 		users.push({ user_role: data, socket_id: socket.id })
 	})
+
+	socket.on("disconnect_terminal", () => {
+		console.log("disconnect terminal")
+		const socketTerminalIndex = terminalsConnected.findIndex((data) => data.socket_id === socket.id)
+		socketTerminalIndex && terminalsConnected.splice(socketTerminalIndex, 1)
+	})
 	socket.on("disconnect", () => {
+		console.log("user disconnected", socket.id)
+		const socketTerminalIndex = terminalsConnected.findIndex((data) => data.socket_id === socket.id)
 		const socketIndex = users.findIndex((data) => data.socket_id === socket.id)
 		socketIndex && users.splice(socketIndex, 1)
+		socketTerminalIndex && terminalsConnected.splice(socketTerminalIndex, 1)
 	})
-	console.log(users)
 })
 
 server.listen(port, () => {
