@@ -11,7 +11,12 @@ interface CardProps {
 }
 
 const Selector = () => {
-	const { setCategory } = useContext(ProductsContext)
+	const { setCategory, category } = useContext(ProductsContext)
+
+	const checkActiveCategory = (categoryName: string) => {
+		if (category === categoryName) return true
+		return false
+	}
 
 	return (
 		<Container>
@@ -20,11 +25,11 @@ const Selector = () => {
 					<ArrowIosUpwardOutline />
 				</IconContainer>
 				<Icons>
-					<Card $active onClick={() => setCategory("Pizza")}>
+					<Card $active={checkActiveCategory("Pizza")} onClick={() => setCategory("Pizza")}>
 						<FoodPizza />
 						<p>Pizzas</p>
 					</Card>
-					<Card onClick={() => setCategory("Drink")}>
+					<Card $active={checkActiveCategory("Drink")} onClick={() => setCategory("Drink")}>
 						<DrinkToGo />
 						<p>Drinks</p>
 					</Card>
@@ -82,6 +87,7 @@ const Card = styled.div<CardProps>`
 	height: 120px;
 	border-radius: 0.4rem;
 	transition: 0.3s ease;
+	cursor: pointer;
 	background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.white)};
 	& > svg {
 		color: ${({ theme }) => theme.colors.text};

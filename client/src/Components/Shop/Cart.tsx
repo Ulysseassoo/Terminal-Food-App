@@ -6,6 +6,7 @@ import styled from "styled-components"
 import { Close } from "styled-icons/material"
 import { CartContext } from "../../Context/CartProvider"
 import { TerminalContext } from "../../Context/TerminalProvider"
+import { UserContext } from "../../Context/UserProvider"
 import { sendOrder } from "../../Services/APIs"
 import { socket } from "../../Services/socket"
 import ProductCard from "./ProductCard"
@@ -32,6 +33,7 @@ const variants = {
 const Cart = ({ setShowCart }: Props) => {
 	const { cart, getTotalPrice, checkout } = useContext(CartContext)
 	const { terminal, disconnectTerminal } = useContext(TerminalContext)
+	const { sessionEnd } = useContext(UserContext)
 	const navigate = useNavigate()
 
 	const cartCheckout = async () => {
@@ -42,6 +44,7 @@ const Cart = ({ setShowCart }: Props) => {
 			if (status === 201) {
 				checkout()
 				disconnectTerminal()
+				sessionEnd()
 				navigate("/checkout")
 			} else {
 				toast.error(data.data)

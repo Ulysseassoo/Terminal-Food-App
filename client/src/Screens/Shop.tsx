@@ -11,6 +11,8 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ProductsContext } from "../Context/ProductsProvider"
 import { socket } from "../Services/socket"
 import { toast } from "react-toastify"
+import { Oval } from "react-loader-spinner"
+import { TerminalContext } from "../Context/TerminalProvider"
 
 interface messageProduct {
 	data: Product
@@ -20,7 +22,8 @@ interface messageProduct {
 const Shop = () => {
 	const theme = useTheme()
 	const params = useParams()
-	const { category, updateProductFromContext, products } = useContext(ProductsContext)
+	const { category, updateProductFromContext, products, productsLoading } = useContext(ProductsContext)
+	const { terminalLoading } = useContext(TerminalContext)
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -41,6 +44,14 @@ const Shop = () => {
 			socket.off("unavailableProduct")
 		}
 	}, [products])
+
+	if (productsLoading && terminalLoading) {
+		return (
+			<Center column background={theme.colors.background}>
+				<Oval color="blue" height={110} width={110} ariaLabel="three-circles-rotating" />
+			</Center>
+		)
+	}
 
 	return (
 		<Container column background={theme.colors.background}>
@@ -67,6 +78,11 @@ const Shop = () => {
 const Container = styled(Main)`
 	justify-content: initial;
 	align-items: initial;
+`
+const Center = styled(Container)`
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
 `
 const Flex = styled.main`
 	display: flex;
