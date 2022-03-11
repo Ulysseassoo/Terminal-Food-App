@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { ArrowIosUpwardOutline } from "@styled-icons/evaicons-outline/ArrowIosUpwardOutline"
 import { ArrowIosDownwardOutline } from "styled-icons/evaicons-outline"
 import { DrinkToGo, FoodPizza } from "styled-icons/fluentui-system-filled"
@@ -21,8 +21,8 @@ const Selector = () => {
 	return (
 		<Container>
 			<Wrapper>
-				<IconContainer>
-					<ArrowIosUpwardOutline />
+				<IconContainer $active={checkActiveCategory("Pizza")}>
+					<ArrowIosUpwardOutline onClick={() => setCategory("Pizza")} />
 				</IconContainer>
 				<Icons>
 					<Card $active={checkActiveCategory("Pizza")} onClick={() => setCategory("Pizza")}>
@@ -34,8 +34,8 @@ const Selector = () => {
 						<p>Drinks</p>
 					</Card>
 				</Icons>
-				<IconContainer>
-					<ArrowIosDownwardOutline />
+				<IconContainer $active={checkActiveCategory("Drink")}>
+					<ArrowIosDownwardOutline onClick={() => setCategory("Drink")} />
 				</IconContainer>
 			</Wrapper>
 		</Container>
@@ -61,13 +61,27 @@ const Wrapper = styled.div`
 	background-color: ${({ theme }) => theme.colors.white};
 `
 
-const IconContainer = styled.div`
+const IconContainer = styled.div<CardProps>`
 	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding: 2.5rem;
 	cursor: pointer;
+	& > svg {
+		transition: 0.2s ease-in;
+		&:hover {
+			color: gray;
+		}
+	}
+	& > svg {
+		${({ $active }) =>
+			$active &&
+			css`
+				color: gray;
+				cursor: initial;
+			`}
+	}
 `
 
 const Icons = styled.div`
