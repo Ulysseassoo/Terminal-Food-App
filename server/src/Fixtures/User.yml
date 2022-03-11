@@ -1,0 +1,16 @@
+entity: User
+items:
+  user0:
+    email: user@gmail.com
+    password: $2a$06$7GhcG..dNNMjb/8JhW3ySujvYWhHajjm.yQ.Rt1Lzcv6gmJVaqiTy
+    role: ""
+
+  user1:
+    email: admin@gmail.com
+    password: $2a$06$yB2mq8V0BBCUN79LK6dxt.ZxjswN7fY30PaITnXfwKJznhRBPQL.m
+    role: "admin"
+
+  user2:
+    email: kitchen@gmail.com
+    role: "kitchen"
+    password: $2a$06$U7afZ/49OqaPN1qlOSS51OCbXbfAGk9/irW58uNoHeQdwFL9SZfgm

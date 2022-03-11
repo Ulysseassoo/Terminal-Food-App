@@ -1,0 +1,6 @@
+entity: Category
+items:
+  category0:
+    name: Pizza
+  category1:
+    name: Drink

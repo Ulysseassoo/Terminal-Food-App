@@ -1,0 +1,127 @@
+entity: Product
+items:
+  product0:
+    name: Pâte au Jambon
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient1"
+  product1:
+    name: Pâte au Thon
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient2"
+  product2:
+    name: Pâte à l'ananas et jambon
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient1"
+      - "@ingredient3"
+  product3:
+    name: Pâte Cheddar et jambon
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient1"
+      - "@ingredient5"
+  product4:
+    name: Pâte Hawaienne
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient1"
+      - "@ingredient6"
+  product5:
+    name: Pâte Mozarella et Viande Hachée
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient6"
+      - "@ingredient7"
+  product6:
+    name: Pâte Thon et Viande Hachée
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient1"
+      - "@ingredient7"
+  product7:
+    name: Pâte Viande Hachée
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient7"
+  product8:
+    name: Pâte Thon & Viande Hachée
+    description: "Une pizza"
+    calories: "525kcal"
+    price: 20
+    custom: false
+    available: true
+    category: "@category0"
+    image: NULL
+    ingredients:
+      - "@ingredient0"
+      - "@ingredient2"
+      - "@ingredient7"
+  product9:
+    name: Jus d'orange
+    description: "Un jus d'orange fait avec de l'oragen"
+    calories: "15kcal"
+    price: 10
+    custom: false
+    available: true
+    category: "@category1"
+    image: NULL
+    ingredients:
+      - "@ingredient4"

@@ -1,9 +1,8 @@
-import React, { useContext, useEffect } from "react"
+import { useContext } from "react"
 import styled, { css } from "styled-components"
 import { ArrowIosUpwardOutline } from "@styled-icons/evaicons-outline/ArrowIosUpwardOutline"
 import { ArrowIosDownwardOutline } from "styled-icons/evaicons-outline"
 import { DrinkToGo, FoodPizza } from "styled-icons/fluentui-system-filled"
-import { getProducts } from "../../Services/APIs"
 import { ProductsContext } from "../../Context/ProductsProvider"
 
 interface CardProps {

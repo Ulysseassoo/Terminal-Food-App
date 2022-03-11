@@ -1,0 +1,8 @@
+entity: Terminal
+items:
+  terminal0:
+    unique_id: 24627ebb-2cbf-4d65-8681-303302fbfab2
+  terminal1:
+    unique_id: 805ec453-32ce-436e-b0fb-2c83a64c8e19
+  terminal2:
+    unique_id: d3e374db-8155-4d74-8bec-a6e3e9f93820

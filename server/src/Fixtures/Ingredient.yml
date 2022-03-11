@@ -1,0 +1,27 @@
+entity: Ingredient
+processor: ../Processor/IngredientProcessor
+items:
+  ingredient0:
+    name: Pâte à pizza
+    important: true
+  ingredient1:
+    name: Jambon
+    important: true
+  ingredient2:
+    name: Thon
+    important: true
+  ingredient3:
+    name: Ananas
+    important: false
+  ingredient4:
+    name: Orange
+    important: false
+  ingredient5:
+    name: Cheddar
+    important: false
+  ingredient6:
+    name: Mozarella
+    important: false
+  ingredient7:
+    name: Viande hachée
+    important: false

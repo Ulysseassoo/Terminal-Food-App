@@ -1,0 +1,5 @@
+entity: Stock
+items:
+  stock{0..7}:
+    quantity: 20
+    ingredient: "@ingredient($current)"
