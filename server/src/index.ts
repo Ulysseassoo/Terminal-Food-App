@@ -1,12 +1,8 @@
 import express, { NextFunction } from "express"
 import "reflect-metadata"
-import dotenv from "dotenv"
-import path from "path"
 import cors from "cors"
 import http from "http"
-import process from "process"
 import { createConnection } from "typeorm"
-import jwtExpress from "express-jwt"
 import UserRoute from "./Routes/user"
 import TerminalRoute from "./Routes/terminal"
 import CategoryRoute from "./Routes/category"
@@ -35,11 +31,6 @@ declare global {
 	}
 }
 
-// In order to use our Private keys we set up config.env file
-dotenv.config({
-	path: path.resolve(__dirname, "config.env")
-})
-
 export let users: UserLogged[] = []
 let terminalsConnected: TerminalConnected[] = []
 
@@ -52,29 +43,10 @@ const io = new Server(server, {
 		methods: ["GET", "POST"]
 	}
 })
-const secret = process.env.JWT_SECRET
 
 app.use(express.json())
 // Use Cors
 app.use(cors())
-
-// Secure each route with a token
-app.use(
-	jwtExpress({ secret: secret, algorithms: ["HS256"], credentialsRequired: false }).unless({
-		path: [
-			"/api/auth",
-			"/api/kitchen",
-			"/api/admin",
-			{
-				url: "/",
-				method: ["GET"]
-			},
-			"/api/products",
-			"/api/ingredients",
-			"/api/images"
-		]
-	})
-)
 
 app.use(async (req: express.Request, res: express.Response, next: NextFunction) => {
 	req.io = io
@@ -86,14 +58,6 @@ app.use(async (req: express.Request, res: express.Response, next: NextFunction) 
 })
 
 app.use((err: any, req: express.Request, res: express.Response, next: NextFunction) => {
-	if (req.path.includes("/api/images/") && req.method === "GET") {
-		next()
-		return
-	}
-	if (req.path.includes("/uploads/")) {
-		next()
-		return
-	}
 	console.log(err)
 	if (err.name === "UnauthorizedError") {
 		return res.status(401).json({ status: 401, data: err.inner.message })
@@ -155,16 +119,13 @@ io.on("connection", async (socket) => {
 	})
 	socket.on("user_join", (data: string) => {
 		users.push({ user_role: data, socket_id: socket.id })
-		console.log("users pushed", users)
 	})
 
 	socket.on("user_disconnect", () => {
-		console.log("users actual", users)
 		const socketIndex = users.findIndex((data) => {
 			data.socket_id === socket.id
 		})
 		socketIndex && users.splice(socketIndex, 1)
-		console.log("users off", users)
 	})
 
 	socket.on("disconnect_terminal", () => {
@@ -173,7 +134,6 @@ io.on("connection", async (socket) => {
 			data.socket_id === socket.id
 		})
 		socketTerminalIndex && terminalsConnected.splice(socketTerminalIndex, 1)
-		console.log(terminalsConnected)
 	})
 	socket.on("disconnect", () => {
 		console.log("user disconnected", socket.id)

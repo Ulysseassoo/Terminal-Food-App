@@ -3,6 +3,8 @@ import { isAdmin } from "../Helpers/verify"
 import { Image } from "../Models/Image"
 import { Product } from "../Models/Product"
 import { upload } from "../Middleware/upload"
+import jwtExpress from "express-jwt"
+import { secret } from "../keys"
 
 const router = express.Router()
 
@@ -49,26 +51,32 @@ router.get("/images/:id", async (req: express.Request, res: express.Response) =>
 	}
 })
 
-router.put("/images/:id", isAdmin, upload.single("file"), async (req: express.Request, res: express.Response) => {
-	const { id } = req.params
+router.put(
+	"/images/:id",
+	jwtExpress({ secret: secret, algorithms: ["HS256"] }),
+	isAdmin,
+	upload.single("file"),
+	async (req: express.Request, res: express.Response) => {
+		const { id } = req.params
 
-	if (!req.file) {
-		throw new Error("Please upload a file !")
+		if (!req.file) {
+			throw new Error("Please upload a file !")
+		}
+
+		try {
+			const image = await Image.findOne(id)
+			image.name = req.file.filename
+			const result = await Image.save(image)
+			res.json({ status: 200, data: result })
+			return
+		} catch (error) {
+			res.json({ status: 400, data: error })
+			return
+		}
 	}
+)
 
-	try {
-		const image = await Image.findOne(id)
-		image.name = req.file.filename
-		const result = await Image.save(image)
-		res.json({ status: 200, data: result })
-		return
-	} catch (error) {
-		res.json({ status: 400, data: error })
-		return
-	}
-})
-
-router.delete("/images/:id", isAdmin, async (req: express.Request, res: express.Response) => {
+router.delete("/images/:id", jwtExpress({ secret: secret, algorithms: ["HS256"] }), isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const image = await Image.findOne(id)

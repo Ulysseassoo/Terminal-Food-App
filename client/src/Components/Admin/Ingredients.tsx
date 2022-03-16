@@ -84,19 +84,13 @@ const Title = styled(motion.h1)`
 	text-transform: capitalize;
 `
 
-const Row = styled(motion.div)`
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1.75rem;
-`
-
 const Bottom = styled(motion.div)`
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
 	height: 100%;
 	padding: 0 1rem 0 0;
+	overflow-y: scroll;
 `
 
 export default Ingredients

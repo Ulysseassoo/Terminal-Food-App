@@ -27,7 +27,7 @@ const Shop = () => {
 	const theme = useTheme()
 	const params = useParams()
 	const { category, updateProductFromContext, products, productsLoading } = useContext(ProductsContext)
-	const { terminalLoading } = useContext(TerminalContext)
+	const { terminalLoading, disconnectTerminal } = useContext(TerminalContext)
 	const variants = {
 		hidden: { opacity: 0 },
 		show: {
@@ -48,8 +48,7 @@ const Shop = () => {
 			socket.off("unavailableProduct")
 		}
 	}, [products])
-	console.log("productsLoading", productsLoading)
-	console.log("terminalLoading", terminalLoading)
+
 	if (productsLoading || terminalLoading) {
 		return (
 			<Center column background={theme.colors.background}>

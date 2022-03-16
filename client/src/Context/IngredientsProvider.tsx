@@ -54,7 +54,7 @@ export const IngredientsProvider: React.FC = ({ children }) => {
 	}
 
 	const addNewIngredient = (ingredient: Ingredient) => {
-		const newIngredients = [ingredient, ...ingredients]
+		const newIngredients = [...ingredients, ingredient]
 		setIngredients(newIngredients)
 	}
 

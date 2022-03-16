@@ -161,6 +161,7 @@ const Bottom = styled(motion.div)`
 	gap: 0.5rem;
 	height: 100%;
 	padding: 0 1rem 0 0;
+	overflow-y: scroll;
 `
 
 export default Products

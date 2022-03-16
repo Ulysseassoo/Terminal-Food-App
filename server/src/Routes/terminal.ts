@@ -2,6 +2,8 @@ import express from "express"
 import { Terminal } from "../Models/Terminal"
 import { v4 as uuidv4 } from "uuid"
 import { isAdmin } from "../Helpers/verify"
+import { secret } from "../keys"
+import jwtExpress from "express-jwt"
 
 const router = express.Router()
 
@@ -13,7 +15,7 @@ router.get("/terminals", async (req: express.Request, res: express.Response) => 
 	return
 })
 
-router.post("/terminals", isAdmin, async (req: express.Request, res: express.Response) => {
+router.post("/terminals", jwtExpress({ secret: secret, algorithms: ["HS256"] }), isAdmin, async (req: express.Request, res: express.Response) => {
 	try {
 		const terminal = new Terminal()
 		const uniqueId = uuidv4()
@@ -45,21 +47,26 @@ router.get("/terminals/:id", async (req: express.Request, res: express.Response)
 	}
 })
 
-router.delete("/terminals/:id", isAdmin, async (req: express.Request, res: express.Response) => {
-	const { id } = req.params
-	try {
-		const terminal = await Terminal.findOne({
-			where: {
-				id: id
-			}
-		})
-		if (!terminal) throw Error
-		res.json({ status: 200, data: "Terminal has been deleted" })
-		return
-	} catch (error) {
-		res.status(400).send({ status: 400, data: "The terminal doesn't exist" })
-		return
+router.delete(
+	"/terminals/:id",
+	jwtExpress({ secret: secret, algorithms: ["HS256"] }),
+	isAdmin,
+	async (req: express.Request, res: express.Response) => {
+		const { id } = req.params
+		try {
+			const terminal = await Terminal.findOne({
+				where: {
+					id: id
+				}
+			})
+			if (!terminal) throw Error
+			res.json({ status: 200, data: "Terminal has been deleted" })
+			return
+		} catch (error) {
+			res.status(400).send({ status: 400, data: "The terminal doesn't exist" })
+			return
+		}
 	}
-})
+)
 
 export default router

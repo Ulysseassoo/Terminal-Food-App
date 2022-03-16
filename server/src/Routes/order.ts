@@ -1,7 +1,5 @@
 import express from "express"
 import jwtExpress from "express-jwt"
-import dotenv from "dotenv"
-import path from "path"
 import { Order } from "../Models/Order"
 import { validationResult } from "express-validator"
 import { orderValidator } from "../Validator/orderValidator"
@@ -15,14 +13,9 @@ import { transporter } from "../Helpers/MailTransporter"
 import { Ingredient } from "../Models/Ingredient"
 import { ProductToOrder } from "../Models/ProductToOrder"
 import { users } from ".."
+import { secret } from "../keys"
 
 const router = express.Router()
-
-dotenv.config({
-	path: path.resolve(__dirname, "../config.env")
-})
-
-const secret = process.env.JWT_SECRET
 
 //  ------------------------------------------ FUNCTIONS ----------------------------------------------
 const renderProductsUnavailable = async (ingredientId: number, req: express.Request) => {
@@ -142,6 +135,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			totalAmount += productToOrder.product.price * productToOrder.quantity
 			if (productToOrder.product.custom) {
 				productToOrder.product.id = null
+				productToOrder.product.image = null
 				await Product.save(productToOrder.product)
 			}
 		}
@@ -153,7 +147,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 			data: order
 		})
 		console.log(req.user)
-		if (req.user !== undefined) {
+		if (req.user !== undefined && req.user.role === "") {
 			await transporter.sendMail({
 				from: "pizza-restaurant@official.fr",
 				to: req.user.email,
@@ -163,6 +157,7 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 		}
 		return
 	} catch (error) {
+		console.log(error)
 		res.status(200).json({ status: 200, data: error.message })
 		return
 	}
@@ -186,7 +181,7 @@ router.get("/orders/:id", async (req: express.Request, res: express.Response) =>
 	}
 })
 
-router.put("/orders/:id", isKitchen, async (req: express.Request, res: express.Response) => {
+router.put("/orders/:id", jwtExpress({ secret: secret, algorithms: ["HS256"] }), isKitchen, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 
 	const { totalAmount, terminal, state }: Order = req.body
@@ -232,7 +227,7 @@ router.put("/orders/:id", isKitchen, async (req: express.Request, res: express.R
 	}
 })
 
-router.delete("/orders/:id", isAdmin, async (req: express.Request, res: express.Response) => {
+router.delete("/orders/:id", jwtExpress({ secret: secret, algorithms: ["HS256"] }), isAdmin, async (req: express.Request, res: express.Response) => {
 	const { id } = req.params
 	try {
 		const order = await Order.findOne({

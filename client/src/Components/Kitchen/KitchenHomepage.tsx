@@ -6,14 +6,13 @@ import OrderCard from "./OrderCard"
 import styled from "styled-components"
 import { AnimatePresence, motion } from "framer-motion"
 import Details from "./Details"
+import { socket } from "../../Services/socket"
 
 const KitchenHomepage = () => {
 	const { ordersLoading, orders, updateOrders, addNewOrder } = useContext(OrdersContext)
 	const [selectedId, setSelectedId] = useState(0)
-	const ENDPOINT = "localhost:3500"
 
 	useEffect(() => {
-		const socket = socketClient(ENDPOINT)
 		socket.on("modifiedOrder", (data) => {
 			updateOrders(data.data)
 		})
@@ -21,7 +20,8 @@ const KitchenHomepage = () => {
 			addNewOrder(order.data)
 		})
 		return () => {
-			socket.disconnect()
+			socket.off("modifiedOrder")
+			socket.off("newOrder")
 		}
 	}, [orders])
 

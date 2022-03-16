@@ -30,17 +30,6 @@ const sendToken = (user: User, statusCode: number, res: any) => {
 
 //  ------------------------------------------ ROUTES -----------------------------------------------
 
-// router.get("/users", async (req: express.Request, res: express.Response) => {
-// 	const user = new User()
-// 	const salt = bcrypt.genSaltSync(6)
-// 	let passwordEncrypted = bcrypt.hashSync("123456admin", salt)
-// 	user.password = passwordEncrypted
-// 	user.email = "admin@gmail.com"
-// 	user.role = "admin"
-// 	User.save(user)
-// 	return res.status(201).send({ message: "created" })
-// })
-
 router.post("/auth", userValidator, async (req: express.Request, res: express.Response) => {
 	const errors = validationResult(req)
 
