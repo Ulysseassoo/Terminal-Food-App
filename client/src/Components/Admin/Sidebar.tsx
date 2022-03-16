@@ -7,12 +7,14 @@ import { Production } from "styled-icons/fluentui-system-filled"
 import { FoodMenu } from "@styled-icons/boxicons-regular"
 import { FoodBank } from "styled-icons/material"
 import { UserContext } from "../../Context/UserProvider"
+import { socket } from "../../Services/socket"
 
 const Sidebar = () => {
 	const { sessionEnd } = useContext(UserContext)
 	const navigate = useNavigate()
 	const loggingOut = () => {
 		sessionEnd()
+		socket.emit("user_disconnect")
 		navigate("/accounts")
 	}
 	return (

@@ -126,10 +126,10 @@ router.post("/orders", orderValidator, async (req: express.Request, res: express
 				if (newStock.quantity === 0) {
 					// Get all products that have this product and render them unavailable
 					renderProductsUnavailable(newStock.id, req)
-					if (users.find((data) => data.user_role === "admin")) {
-						req.io
-							.to(users.find((data) => data.user_role === "admin").socket_id)
-							.emit("unavailableIngredient", { message: `This product: ${newStock.ingredient.name} quantity reached 0` })
+					for (const user of users) {
+						if (user.user_role === "admin") {
+							req.io.to(user.socket_id).emit("unavailableIngredient", { message: `This product: ${newStock.ingredient.name} quantity reached 0` })
+						}
 					}
 					await transporter.sendMail({
 						from: "pizza-restaurant@official.fr",

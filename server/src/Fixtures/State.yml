@@ -1,6 +1,6 @@
 entity: State
 items:
   state0:
-    name: Done
-  state1:
     name: Not done
+  state1:
+    name: Done

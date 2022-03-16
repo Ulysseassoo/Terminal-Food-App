@@ -120,7 +120,8 @@ createConnection()
 
 io.on("connection", async (socket) => {
 	console.log(`a user connected: ${socket.id}`)
-	const connectTerminal = async () => {
+
+	const connectTerminal = async (terminalsConnected: TerminalConnected[]) => {
 		const terminals = await Terminal.find()
 		let terminalToBeConnected: Terminal
 		// Check if a terminal is connected
@@ -135,24 +136,53 @@ io.on("connection", async (socket) => {
 
 		return terminalToBeConnected
 	}
-	let terminalConnected: Terminal = await connectTerminal()
-	socket.on("get_terminal", () => {
+
+	let terminalConnected: Terminal = await connectTerminal(terminalsConnected)
+
+	socket.on("get_terminal", async () => {
 		console.log("get_termial")
+		// Queue in order to assign a terminal
+		while (terminalConnected === undefined) {
+			terminalConnected = await connectTerminal(terminalsConnected)
+			if (terminalConnected !== undefined) break
+			// Check if user has closed the page or not
+			const user = users.find((data) => {
+				data.socket_id === socket.id
+			})
+			if (!!user) break
+		}
 		io.emit("connect_terminal", { data: terminalConnected })
 	})
 	socket.on("user_join", (data: string) => {
 		users.push({ user_role: data, socket_id: socket.id })
+		console.log("users pushed", users)
+	})
+
+	socket.on("user_disconnect", () => {
+		console.log("users actual", users)
+		const socketIndex = users.findIndex((data) => {
+			data.socket_id === socket.id
+		})
+		socketIndex && users.splice(socketIndex, 1)
+		console.log("users off", users)
 	})
 
 	socket.on("disconnect_terminal", () => {
 		console.log("disconnect terminal")
-		const socketTerminalIndex = terminalsConnected.findIndex((data) => data.socket_id === socket.id)
+		const socketTerminalIndex = terminalsConnected.findIndex((data) => {
+			data.socket_id === socket.id
+		})
 		socketTerminalIndex && terminalsConnected.splice(socketTerminalIndex, 1)
+		console.log(terminalsConnected)
 	})
 	socket.on("disconnect", () => {
 		console.log("user disconnected", socket.id)
-		const socketTerminalIndex = terminalsConnected.findIndex((data) => data.socket_id === socket.id)
-		const socketIndex = users.findIndex((data) => data.socket_id === socket.id)
+		const socketTerminalIndex = terminalsConnected.findIndex((data) => {
+			data.socket_id === socket.id
+		})
+		const socketIndex = users.findIndex((data) => {
+			data.socket_id === socket.id
+		})
 		socketIndex && users.splice(socketIndex, 1)
 		socketTerminalIndex && terminalsConnected.splice(socketTerminalIndex, 1)
 	})

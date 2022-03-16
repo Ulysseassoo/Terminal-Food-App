@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { motion } from "framer-motion"
 import React, { useContext } from "react"
 import { useTable, usePagination } from "react-table"
@@ -63,7 +64,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		// previousPage,
 		// setPageSize,
 		state: { pageIndex, pageSize }
-	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination) as TableTypeWorkaround<T>
+	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination) as TableTypeWorkaround
 
 	const deleteItem = async (id: number) => {
 		const token = localStorage.getItem("token")
@@ -85,8 +86,8 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 					{headerGroups.map((headerGroup, headerIndex) => (
 						<Tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column, columnIndex) => {
-								if (column.id === "delete" && $order) return <></>
-								if (column.id === "edit" && $order) return <></>
+								if (column.id === "delete" && $order) return <Th {...column.getHeaderProps()}></Th>
+								if (column.id === "edit" && $order) return <Th {...column.getHeaderProps()}></Th>
 								return <Th {...column.getHeaderProps()}>{column.render("Header")}</Th>
 							})}
 						</Tr>
@@ -115,7 +116,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 										)
 									}
 									if (cell.column.id === "delete" || (cell.column.id === "edit" && $order)) {
-										return <></>
+										return <Td {...cell.getCellProps()} cellProps={cell.value}></Td>
 									}
 									if (cell.column.id === "image") {
 										return (

@@ -19,6 +19,10 @@ interface messageProduct {
 	message: string
 }
 
+interface TitleProps {
+	size?: string
+}
+
 const Shop = () => {
 	const theme = useTheme()
 	const params = useParams()
@@ -44,11 +48,13 @@ const Shop = () => {
 			socket.off("unavailableProduct")
 		}
 	}, [products])
-
-	if (productsLoading && terminalLoading) {
+	console.log("productsLoading", productsLoading)
+	console.log("terminalLoading", terminalLoading)
+	if (productsLoading || terminalLoading) {
 		return (
 			<Center column background={theme.colors.background}>
 				<Oval color="blue" height={110} width={110} ariaLabel="three-circles-rotating" />
+				<Title size="3rem">All terminals are used, please wait</Title>
 			</Center>
 		)
 	}
@@ -103,9 +109,9 @@ const Wrapper = styled.div`
 	align-self: start;
 `
 
-const Title = styled(motion.h1)`
+const Title = styled(motion.h1)<TitleProps>`
 	font-family: ${({ theme }) => theme.fonts.title};
-	font-size: ${({ theme }) => theme.size.xl};
+	font-size: ${({ theme, size }) => (size ? size : theme.size.xl)};
 	color: ${({ theme }) => theme.colors.text};
 	font-weight: bold;
 	text-transform: capitalize;

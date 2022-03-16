@@ -8,7 +8,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient1"
@@ -20,7 +20,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient2"
@@ -32,7 +32,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient1"
@@ -45,7 +45,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient1"
@@ -58,7 +58,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient1"
@@ -71,7 +71,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient6"
@@ -84,7 +84,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient1"
@@ -97,7 +97,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient7"
@@ -109,7 +109,7 @@ items:
     custom: false
     available: true
     category: "@category0"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient0"
       - "@ingredient2"
@@ -122,6 +122,6 @@ items:
     custom: false
     available: true
     category: "@category1"
-    image: NULL
+    image: "@image($current)"
     ingredients:
       - "@ingredient4"
