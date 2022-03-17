@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 import { useLocation } from "react-router"
+import { toast } from "react-toastify"
 import { socket } from "../Services/socket"
 
 type TerminalContextType = {
@@ -32,6 +33,7 @@ export const TerminalProvider: React.FC = ({ children }) => {
 			socket.on("connect_terminal", (data) => {
 				setTerminal(data.data)
 				setTerminalLoading(false)
+				toast.success("Connected successfully to a Terminal")
 			})
 		}
 		return () => {

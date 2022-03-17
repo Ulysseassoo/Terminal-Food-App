@@ -14,7 +14,7 @@ export class Ingredient extends BaseEntity {
 	@Column()
 	important: boolean
 
-	@OneToOne(() => Stock, (stock) => stock.ingredient, { cascade: true })
+	@OneToOne(() => Stock, (stock) => stock.ingredient, { onDelete: "CASCADE", onUpdate: "CASCADE" })
 	stock: Stock
 
 	@ManyToMany(() => Product, (product) => product.ingredients)

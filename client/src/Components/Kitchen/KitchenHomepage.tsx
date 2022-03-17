@@ -7,10 +7,15 @@ import styled from "styled-components"
 import { AnimatePresence, motion } from "framer-motion"
 import Details from "./Details"
 import { socket } from "../../Services/socket"
+import { LogOut } from "styled-icons/boxicons-solid"
+import { UserContext } from "../../Context/UserProvider"
+import { useNavigate } from "react-router"
 
 const KitchenHomepage = () => {
 	const { ordersLoading, orders, updateOrders, addNewOrder } = useContext(OrdersContext)
 	const [selectedId, setSelectedId] = useState(0)
+	const { sessionEnd } = useContext(UserContext)
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		socket.on("modifiedOrder", (data) => {
@@ -36,10 +41,20 @@ const KitchenHomepage = () => {
 		}
 	}
 
+	const loggingOut = () => {
+		sessionEnd()
+		socket.emit("user_disconnect")
+		navigate("/accounts")
+	}
+
 	if (ordersLoading) return <>Loading...</>
 
 	return (
 		<Main column initial="hidden" animate="show" exit="hidden" variants={variants} gap="2rem">
+			<Logout whileHover={{ opacity: 0.8 }} onClick={() => loggingOut()}>
+				{" "}
+				<LogOut /> Logout
+			</Logout>
 			<Title>In the Kitchen</Title>
 			<Container>
 				<Top>
@@ -96,6 +111,24 @@ const Top = styled(motion.div)`
 	scrollbar-width: thin;
 	align-items: center;
 	gap: 2rem;
+`
+
+const Logout = styled(motion.div)`
+	display: inline-flex;
+	align-items: center;
+	color: ${({ theme }) => theme.colors.error};
+	gap: 3rem;
+	width: 100%;
+	padding: 2.5rem;
+	margin-top: auto;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	& svg {
+		width: 28px;
+		height: 28px;
+	}
 `
 
 export default KitchenHomepage

@@ -64,7 +64,7 @@ router.put(
 		}
 
 		try {
-			const image = await Image.findOne(id)
+			const image = await Image.findOne(id, { relations: ["product"] })
 			image.name = req.file.filename
 			const result = await Image.save(image)
 			res.json({ status: 200, data: result })

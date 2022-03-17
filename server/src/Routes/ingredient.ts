@@ -5,6 +5,7 @@ import { Ingredient } from "../Models/Ingredient"
 import { isAdmin } from "../Helpers/verify"
 import jwtExpress from "express-jwt"
 import { secret } from "../keys"
+import { Stock } from "../Models/Stock"
 
 const router = express.Router()
 
@@ -39,7 +40,8 @@ router.post(
 
 			ingredient.name = name
 			ingredient.important = important
-			ingredient.stock = stock
+			const newStock = await Stock.save(stock)
+			ingredient.stock = newStock
 			const result = await Ingredient.save(ingredient)
 			res.json({ status: 200, data: result })
 			return
@@ -93,7 +95,11 @@ router.put(
 
 			ingredient.name = name
 			ingredient.important = important
-			ingredient.stock.quantity = stock.quantity
+
+			const updateStock = await Stock.findOne(ingredient.stock.id)
+			updateStock.quantity = stock.quantity
+			Stock.save(updateStock)
+			ingredient.stock = updateStock
 			const result = await Ingredient.save(ingredient)
 			res.json({ status: 200, data: result })
 			return
@@ -119,6 +125,7 @@ router.delete(
 				}
 			})
 			if (!ingredient) throw Error("The ingredient was not found")
+			Ingredient.delete(ingredient)
 			res.json({ status: 200, data: "Ingredient has been deleted" })
 			return
 		} catch (error) {

@@ -45,6 +45,7 @@ const Cart = ({ setShowCart }: Props) => {
 				checkout()
 				disconnectTerminal()
 				sessionEnd()
+				localStorage.removeItem("token")
 				navigate("/checkout")
 			} else {
 				toast.error(data.data)

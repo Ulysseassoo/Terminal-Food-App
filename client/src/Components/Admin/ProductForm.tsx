@@ -75,6 +75,7 @@ const ProductForm = () => {
 			if (imageResult.status !== 200 && imageResult.status !== 201) throw Error
 			if (selectedProduct !== 0) {
 				updateProductImageFromContext(imageResult.data)
+				console.log(imageResult.data)
 				toast.success("Your product has been edited")
 			} else {
 				addNewProduct(imageResult.data)
@@ -132,7 +133,7 @@ const ProductForm = () => {
 											type="checkbox"
 											id={`${ingredient.name}`}
 											value={ingredient.id}
-											checked={true}
+											defaultChecked
 											{...register("ingredients", { required: true })}
 										/>
 										<label htmlFor={`${ingredient.name}`}>{ingredient.name}</label>

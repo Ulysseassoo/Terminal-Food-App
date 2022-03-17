@@ -39,12 +39,6 @@ const Sidebar = () => {
 						<LinkName>ingredients</LinkName>
 					</CustomLink>
 				</AnimateBox>
-				<AnimateBox>
-					<CustomLink to="orders">
-						<FoodMenu />
-						<LinkName>orders</LinkName>
-					</CustomLink>
-				</AnimateBox>
 			</Links>
 			<Logout whileHover={{ opacity: 0.8 }} onClick={() => loggingOut()}>
 				{" "}

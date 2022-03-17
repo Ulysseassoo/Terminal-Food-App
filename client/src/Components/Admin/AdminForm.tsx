@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import React, { useContext } from "react"
+import { useContext } from "react"
 import styled from "styled-components"
 import { Close } from "styled-icons/material"
 import { ProductsContext } from "../../Context/ProductsProvider"
@@ -27,7 +27,7 @@ const variants = {
 }
 
 const AdminForm = ({ $ingredient }: Props) => {
-	const { setShowForm, setSelectedProduct, selectedProduct } = useContext(ProductsContext)
+	const { setShowForm, selectedProduct } = useContext(ProductsContext)
 
 	return (
 		<Container initial="hidden" animate="show" exit="hidden" variants={variants}>

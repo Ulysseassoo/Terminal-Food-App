@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { motion } from "framer-motion"
 import React, { useContext } from "react"
 import { useTable, usePagination } from "react-table"
@@ -9,7 +8,6 @@ import { getColumns, getFormattedData } from "../../Helpers/useTableData"
 import { deleteIngredient, deleteProduct } from "../../Services/APIs"
 import ProductImage from "../../assets/pizzaz.png"
 import { IngredientsContext } from "../../Context/IngredientsProvider"
-import type { TableInstance, Row } from "react-table"
 
 interface Props {
 	contextData: (Order | Product | Ingredient)[]
@@ -19,17 +17,6 @@ interface Props {
 }
 interface CellProps {
 	cellProps: any
-}
-
-type TableTypeWorkaround<T extends Object> = TableInstance<T> & {
-	gotoPage: (index: number) => void
-	page: Row<{
-		[key: string]: any
-	}>[]
-	state: {
-		pageIndex: number
-		pageSize: number
-	}
 }
 
 const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
@@ -54,17 +41,9 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 		getTableBodyProps,
 		headerGroups,
 		prepareRow,
-		page,
-		// canPreviousPage,
-		// canNextPage,
-		// pageOptions,
-		// pageCount,
-		// gotoPage,
-		// nextPage,
-		// previousPage,
-		// setPageSize,
-		state: { pageIndex, pageSize }
-	} = useTable({ columns, data, initialState: { pageIndex: 0 } }, usePagination) as TableTypeWorkaround
+		rows
+		// @ts-ignore
+	} = useTable({ columns, data })
 
 	const deleteItem = async (id: number) => {
 		const token = localStorage.getItem("token")
@@ -95,7 +74,7 @@ const Table = ({ contextData, $product, $ingredient, $order }: Props) => {
 				</thead>
 
 				<tbody {...getTableBodyProps()}>
-					{page.map((row) => {
+					{rows.map((row) => {
 						prepareRow(row)
 
 						return (

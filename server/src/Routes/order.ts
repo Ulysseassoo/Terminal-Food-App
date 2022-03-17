@@ -1,4 +1,4 @@
-import express from "express"
+import express, { NextFunction } from "express"
 import jwtExpress from "express-jwt"
 import { Order } from "../Models/Order"
 import { validationResult } from "express-validator"
@@ -62,106 +62,113 @@ router.get("/orders", async (req: express.Request, res: express.Response) => {
 	return
 })
 
-router.post("/orders", orderValidator, async (req: express.Request, res: express.Response) => {
-	const errors = validationResult(req)
+router.post(
+	"/orders",
+	jwtExpress({ secret: secret, algorithms: ["HS256"], credentialsRequired: false }),
+	orderValidator,
+	async (req: express.Request, res: express.Response) => {
+		const errors = validationResult(req)
 
-	if (!errors.isEmpty()) {
-		res.status(401).send({
-			status: 401,
-			data: errors
-		})
-		return
-	}
+		if (!errors.isEmpty()) {
+			res.status(401).send({
+				status: 401,
+				data: errors
+			})
+			return
+		}
 
-	const { terminal, productToOrders }: Order = req.body
+		const { terminal, productToOrders }: Order = req.body
 
-	try {
-		const order = new Order()
-		let totalAmount = 0
-		const orderState = await State.findOne({
-			where: {
-				id: 1
-			}
-		})
-
-		const orderTerminal = await Terminal.findOne({
-			where: {
-				unique_id: terminal
-			}
-		})
-
-		order.state = orderState
-		order.terminal = orderTerminal
-		if (req.user) {
-			const orderUser = await User.findOne({
+		try {
+			const order = new Order()
+			let totalAmount = 0
+			const orderState = await State.findOne({
 				where: {
-					id: req.user.id
+					id: 1
 				}
 			})
-			order.user = orderUser
-		}
-		const isStockEnough = await checkIngredientsQuantity(productToOrders)
-		if (!isStockEnough) throw Error("There is not enough quantity to do your order. Please reconsider.")
 
-		for (let i = 0; i < productToOrders.length; i++) {
-			const productToOrder = productToOrders[i]
-			for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
-				const ingredient = productToOrder.product.ingredients[x]
-				let oldStock = await Stock.findOne({
+			const orderTerminal = await Terminal.findOne({
+				where: {
+					unique_id: terminal
+				}
+			})
+
+			order.state = orderState
+			order.terminal = orderTerminal
+			if (req.user) {
+				const orderUser = await User.findOne({
 					where: {
-						ingredient: ingredient.id
-					},
-					relations: ["ingredient"]
-				})
-				oldStock.quantity -= productToOrder.quantity
-				const newStock = await Stock.save(oldStock)
-				req.io.emit("changedStock", { data: newStock })
-				if (newStock.quantity === 0) {
-					// Get all products that have this product and render them unavailable
-					renderProductsUnavailable(newStock.id, req)
-					for (const user of users) {
-						if (user.user_role === "admin") {
-							req.io.to(user.socket_id).emit("unavailableIngredient", { message: `This product: ${newStock.ingredient.name} quantity reached 0` })
-						}
+						id: req.user.id
 					}
-					await transporter.sendMail({
-						from: "pizza-restaurant@official.fr",
-						to: "admin@pizza-restaurant.fr",
-						subject: `Product :  ${newStock.ingredient.name}`,
-						html: "It is not available anymore !"
+				})
+				order.user = orderUser
+			}
+			const isStockEnough = await checkIngredientsQuantity(productToOrders)
+			if (!isStockEnough) throw Error("There is not enough quantity to do your order. Please reconsider.")
+
+			for (let i = 0; i < productToOrders.length; i++) {
+				const productToOrder = productToOrders[i]
+				for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
+					const ingredient = productToOrder.product.ingredients[x]
+					let oldStock = await Stock.findOne({
+						where: {
+							ingredient: ingredient.id
+						},
+						relations: ["ingredient"]
 					})
+					oldStock.quantity -= productToOrder.quantity
+					const newStock = await Stock.save(oldStock)
+					req.io.emit("changedStock", { data: newStock })
+					if (newStock.quantity === 0) {
+						// Get all products that have this product and render them unavailable
+						renderProductsUnavailable(newStock.id, req)
+						for (const user of users) {
+							if (user.user_role === "admin") {
+								req.io.to(user.socket_id).emit("unavailableIngredient", { message: `This product: ${newStock.ingredient.name} quantity reached 0` })
+							}
+						}
+						await transporter.sendMail({
+							from: "pizza-restaurant@official.fr",
+							to: "admin@pizza-restaurant.fr",
+							subject: `Product :  ${newStock.ingredient.name}`,
+							html: "It is not available anymore !"
+						})
+					}
+				}
+				totalAmount += productToOrder.product.price * productToOrder.quantity
+				if (productToOrder.product.custom) {
+					productToOrder.product.id = null
+					productToOrder.product.image = null
+					await Product.save(productToOrder.product)
 				}
 			}
-			totalAmount += productToOrder.product.price * productToOrder.quantity
-			if (productToOrder.product.custom) {
-				productToOrder.product.id = null
-				productToOrder.product.image = null
-				await Product.save(productToOrder.product)
-			}
-		}
-		order.totalAmount = totalAmount
-		order.productToOrders = productToOrders
-		const result = await Order.save(order)
-		res.status(201).json({ status: 201, data: result })
-		req.io.emit("newOrder", {
-			data: order
-		})
-		console.log(req.user)
-		if (req.user !== undefined && req.user.role === "") {
-			await transporter.sendMail({
-				from: "pizza-restaurant@official.fr",
-				to: req.user.email,
-				subject: `New Order ${result.id}`,
-				html: "Mon contenu"
+			order.totalAmount = totalAmount
+			order.productToOrders = productToOrders
+			const result = await Order.save(order)
+			res.status(201).json({ status: 201, data: result })
+			req.io.emit("newOrder", {
+				data: order
 			})
+			const user = await User.findOne(req.user.id)
+			if (user !== undefined && user.role === "") {
+				await transporter.sendMail({
+					from: "pizza-restaurant@official.fr",
+					to: user.email,
+					subject: `New Order from pizza Restaurant`,
+					html: `Here is your order details: \n Order n #${result.id} \n At ${new Date(result.createdAt).toDateString()} \n Price: ${
+						result.totalAmount
+					} \n Products bought: ${result.productToOrders.map((order) => `${order.product.name} * ${order.quantity}`)} \n`
+				})
+			}
+			return
+		} catch (error) {
+			console.log(error)
+			res.status(200).json({ status: 200, data: error.message })
+			return
 		}
-		return
-	} catch (error) {
-		console.log(error)
-		res.status(200).json({ status: 200, data: error.message })
-		return
 	}
-})
+)
 
 router.get("/orders/:id", async (req: express.Request, res: express.Response) => {
 	const { id } = req.params

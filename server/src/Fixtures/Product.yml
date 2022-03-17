@@ -116,7 +116,7 @@ items:
       - "@ingredient7"
   product9:
     name: Jus d'orange
-    description: "Un jus d'orange fait avec de l'oragen"
+    description: "Un jus d'orange fait avec de l'orage et de la pate a pizza pour du croustillant"
     calories: "15kcal"
     price: 10
     custom: false
@@ -125,3 +125,4 @@ items:
     image: "@image($current)"
     ingredients:
       - "@ingredient4"
+      - "@ingredient1"
