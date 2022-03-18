@@ -106,7 +106,6 @@ router.post(
 			}
 			const isStockEnough = await checkIngredientsQuantity(productToOrders)
 			if (!isStockEnough) throw Error("There is not enough quantity to do your order. Please reconsider.")
-
 			for (let i = 0; i < productToOrders.length; i++) {
 				const productToOrder = productToOrders[i]
 				for (let x = 0; x < productToOrder.product.ingredients.length; x++) {
@@ -150,16 +149,18 @@ router.post(
 			req.io.emit("newOrder", {
 				data: order
 			})
-			const user = await User.findOne(req.user.id)
-			if (user !== undefined && user.role === "") {
-				await transporter.sendMail({
-					from: "pizza-restaurant@official.fr",
-					to: user.email,
-					subject: `New Order from pizza Restaurant`,
-					html: `Here is your order details: \n Order n #${result.id} \n At ${new Date(result.createdAt).toDateString()} \n Price: ${
-						result.totalAmount
-					} \n Products bought: ${result.productToOrders.map((order) => `${order.product.name} * ${order.quantity}`)} \n`
-				})
+			if (req.user) {
+				const user = await User.findOne(req.user.id)
+				if (user !== undefined && user.role === "") {
+					await transporter.sendMail({
+						from: "pizza-restaurant@official.fr",
+						to: user.email,
+						subject: `New Order from pizza Restaurant`,
+						html: `Here is your order details: \n Order n #${result.id} \n At ${new Date(result.createdAt).toDateString()} \n Price: ${
+							result.totalAmount
+						} \n Products bought: ${result.productToOrders.map((order) => `${order.product.name} * ${order.quantity}`)} \n`
+					})
+				}
 			}
 			return
 		} catch (error) {

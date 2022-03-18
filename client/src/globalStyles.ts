@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import styled, { createGlobalStyle } from "styled-components"
 
-type MainStyle = {
+interface MainStyle {
 	column?: boolean
 	background?: string
 	gap?: string

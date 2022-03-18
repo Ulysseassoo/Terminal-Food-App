@@ -12,6 +12,7 @@ import Products from "./Products"
 import { AnimatePresence } from "framer-motion"
 import { IngredientsContext } from "../../Context/IngredientsProvider"
 import { toast } from "react-toastify"
+import Terminals from "./Terminals"
 
 const AdminHomepage = () => {
 	const { orders, updateOrders, addNewOrder } = useContext(OrdersContext)

@@ -12,6 +12,7 @@ type TerminalContextType = {
 
 const initialState = {
 	terminalLoading: false,
+	terminalsConnected: [],
 	terminal: {
 		id: 0,
 		unique_id: ""
